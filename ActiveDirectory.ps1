@@ -1,15 +1,15 @@
-Configuration ActiveDirectory
+configuration ActiveDirectory
 {
 
 [CmdletBinding()]
+
+Import-DscResource -ModuleName PSDesiredStateConfiguration, xActiveDirectory
 
 Param (
 	[string] $NodeName,
 	[string] $domainName,
 	[System.Management.Automation.PSCredential]$domainAdminCredentials
 )
-
-Import-DscResource -ModuleName PSDesiredStateConfiguration, xActiveDirectory
 
 	Node PrimaryDomainController
     {
