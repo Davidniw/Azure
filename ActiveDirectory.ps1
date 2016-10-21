@@ -6,8 +6,8 @@ configuration ActiveDirectory
 Import-DscResource -ModuleName PSDesiredStateConfiguration, xActiveDirectory
 
 Param (
-	[string] $NodeName,
-	[string] $domainName,
+	[string] $NodeName = "PrimaryDomainController",
+	[string] $domainName = "rockend.io",
 	[System.Management.Automation.PSCredential]$domainAdminCredentials
 )
 
