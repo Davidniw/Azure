@@ -3,8 +3,6 @@ configuration ActiveDirectory
 
 [CmdletBinding()]
 
-Import-DscResource -ModuleName PSDesiredStateConfiguration, xActiveDirectory
-
 Param (
 	[string] $NodeName = "PrimaryDomainController",
 	[string] $domainName = "rockend.io",
