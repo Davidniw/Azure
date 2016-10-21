@@ -1,43 +1,82 @@
-configuration ActiveDirectory
-{ 
-    
-    Import-DscResource -ModuleName PSDesiredStateConfiguration
+Configuration ActiveDirectory
+{
 
-    $storageCredential = Get-AutomationPSCredential -Name 'domainCreds'
+[CmdletBinding()]
 
-    Node TeamCity
+Param (
+	[string] $NodeName,
+	[string] $domainName,
+	[System.Management.Automation.PSCredential]$domainAdminCredentials
+)
+
+Import-DscResource -ModuleName PSDesiredStateConfiguration, xActiveDirectory
+
+	Node PrimaryDomainController
     {
-        WindowsFeature IIS
-        {
-            Ensure               = 'Absent'
-            Name                 = 'Web-Server'
+        LocalConfigurationManager
+		{
+			ConfigurationMode = 'ApplyAndAutoCorrect'
+			RebootNodeIfNeeded = $true
+			ActionAfterReboot = 'ContinueConfiguration'
+			AllowModuleOverwrite = $true
+		}
 
-        }
-    }
+		WindowsFeature DNS_RSAT
+		{ 
+			Ensure = "Present" 
+			Name = "RSAT-DNS-Server"
+		}
 
-    Node SonarQube
-    {
-    	File SQLBinaryDownload
-    	{
-    		DestinationPath = "C:\SQLInstall"
-    		Credential = $storageCredential
-    		Ensure = "Present"
-    		SourcePath = "\\prodrockcoresoftware.file.core.windows.net\software\SQLJDBC"
-    		Type = "Directory"
-    		Recurse = $true
-     	}
+		WindowsFeature ADDS_Install 
+		{ 
+			Ensure = 'Present' 
+			Name = 'AD-Domain-Services' 
+		} 
 
+		WindowsFeature RSAT_AD_AdminCenter 
+		{
+			Ensure = 'Present'
+			Name   = 'RSAT-AD-AdminCenter'
+		}
 
-        LocalConfigurationManager 
-        { 
-            CertificateId = $node.Thumbprint 
-        }
+		WindowsFeature RSAT_ADDS 
+		{
+			Ensure = 'Present'
+			Name   = 'RSAT-ADDS'
+		}
 
-        WindowsFeature IIS
-        {
-            Ensure               = 'Absent'
-            Name                 = 'Web-Server'
+		WindowsFeature RSAT_AD_PowerShell 
+		{
+			Ensure = 'Present'
+			Name   = 'RSAT-AD-PowerShell'
+		}
 
-        }
+		WindowsFeature RSAT_AD_Tools 
+		{
+			Ensure = 'Present'
+			Name   = 'RSAT-AD-Tools'
+		}
+
+		WindowsFeature RSAT_Role_Tools 
+		{
+			Ensure = 'Present'
+			Name   = 'RSAT-Role-Tools'
+		}      
+
+		WindowsFeature RSAT_GPMC 
+		{
+			Ensure = 'Present'
+			Name   = 'GPMC'
+		} 
+		xADDomain CreateForest 
+		{ 
+			DomainName = $domainName            
+			DomainAdministratorCredential = $domainAdminCredentials
+			SafemodeAdministratorPassword = $domainAdminCredentials
+			DatabasePath = "C:\Windows\NTDS"
+			LogPath = "C:\Windows\NTDS"
+			SysvolPath = "C:\Windows\Sysvol"
+			DependsOn = '[WindowsFeature]ADDS_Install'
+		}
     }
 }
