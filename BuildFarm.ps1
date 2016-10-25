@@ -3,7 +3,7 @@ configuration BuildFarm
     
     Import-DscResource -ModuleName PSDesiredStateConfiguration
 
-    $storageCredential = Get-AutomationPSCredential -Name 'domainCreds'
+    $storageCredential = Get-AutomationPSCredential -Name 'storageCredential'
 
     Node TeamCity
     {
