@@ -1,11 +1,12 @@
-Configuration ComputerDomainJoin
+configuration ComputerDomainJoin
 {
     Import-DscResource -ModuleName 'PSDesiredStateConfiguration'
     Import-DscResource -ModuleName 'xDSCDomainjoin'
+
     $dscDomainAdmin = Get-AutomationPSCredential -Name 'domainCreds'
     $dscDomainName = Get-AutomationVariable -Name 'dscDomainName'
  
-    node DomainJoin
+    Node DomainJoin
     {
         xDSCDomainjoin JoinDomain
         {
@@ -13,13 +14,4 @@ Configuration ComputerDomainJoin
             Credential = $dscDomainAdmin
         }
     }
-}
-$ConfigData = @{
-    AllNodes = @(
-        @{
-            NodeName = "DomainJoin"
-            PSDscAllowPlainTextPassword = $True
-            PSDscAllowDomainUser = $True
-        }
-    )
 }
