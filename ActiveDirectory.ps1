@@ -1,126 +1,43 @@
-Configuration ActiveDirectory
-{
-	Import-DSCResource -ModuleName xStorage, xActiveDirectory, xPendingReboot
+configuration BuildFarm
+{ 
+    
+    Import-DscResource -ModuleName PSDesiredStateConfiguration
 
-	Node PrimaryDomainController
+    $storageCredential = Get-AutomationPSCredential -Name 'storageCredential'
+
+    Node TeamCity
     {
+        WindowsFeature IIS
+        {
+            Ensure               = 'Absent'
+            Name                 = 'Web-Server'
 
-		WindowsFeature DNS_RSAT
-		{ 
-			Ensure = "Present" 
-			Name = "RSAT-DNS-Server"
-		}
-
-		WindowsFeature ADDS_Install 
-		{ 
-			Ensure = 'Present' 
-			Name = 'AD-Domain-Services' 
-		} 
-
-		WindowsFeature RSAT_AD_AdminCenter 
-		{
-			Ensure = 'Present'
-			Name   = 'RSAT-AD-AdminCenter'
-		}
-
-		WindowsFeature RSAT_ADDS 
-		{
-			Ensure = 'Present'
-			Name   = 'RSAT-ADDS'
-		}
-
-		WindowsFeature RSAT_AD_PowerShell 
-		{
-			Ensure = 'Present'
-			Name   = 'RSAT-AD-PowerShell'
-		}
-
-		WindowsFeature RSAT_AD_Tools 
-		{
-			Ensure = 'Present'
-			Name   = 'RSAT-AD-Tools'
-		}
-
-		WindowsFeature RSAT_Role_Tools 
-		{
-			Ensure = 'Present'
-			Name   = 'RSAT-Role-Tools'
-		}      
-
-		WindowsFeature RSAT_GPMC 
-		{
-			Ensure = 'Present'
-			Name   = 'GPMC'
-		} 
-		
+        }
     }
 
-		Node BackupDomainController
+    Node SonarQube
     {
-
-		WindowsFeature DNS_RSAT
-		{ 
-			Ensure = "Present" 
-			Name = "RSAT-DNS-Server"
-		}
-
-		WindowsFeature ADDS_Install 
-		{ 
-			Ensure = 'Present' 
-			Name = 'AD-Domain-Services' 
-		} 
-
-		WindowsFeature RSAT_AD_AdminCenter 
-		{
-			Ensure = 'Present'
-			Name   = 'RSAT-AD-AdminCenter'
-		}
-
-		WindowsFeature RSAT_ADDS 
-		{
-			Ensure = 'Present'
-			Name   = 'RSAT-ADDS'
-		}
-
-		WindowsFeature RSAT_AD_PowerShell 
-		{
-			Ensure = 'Present'
-			Name   = 'RSAT-AD-PowerShell'
-		}
-
-		WindowsFeature RSAT_AD_Tools 
-		{
-			Ensure = 'Present'
-			Name   = 'RSAT-AD-Tools'
-		}
-
-		WindowsFeature RSAT_Role_Tools 
-		{
-			Ensure = 'Present'
-			Name   = 'RSAT-Role-Tools'
-		}      
-
-		WindowsFeature RSAT_GPMC 
-		{
-			Ensure = 'Present'
-			Name   = 'GPMC'
-		} 
-		
-    }
-
-    Node RootCertificateAuthority
-    {
-    	WindowsFeature AD_Certificate
+    	File SQLBinaryDownload
     	{
-    		Ensure = 'Present'
-    		Name   = 'AD-Certificate'
-    	}
+    		DestinationPath = "C:\SQLInstall"
+    		Credential = $storageCredential
+    		Ensure = "Present"
+    		SourcePath = "\\prodrockcoresoftware.file.core.windows.net\software\SQLJDBC"
+    		Type = "Directory"
+    		Recurse = $true
+     	}
 
-    	WindowsFeature ADCS_Cert_Authority
-    	{
-    		Ensure = 'Present'
-    		Name   = 'ADCS-Cert-Authority'
-    	}
+
+        LocalConfigurationManager 
+        { 
+            CertificateId = $node.Thumbprint 
+        }
+
+        WindowsFeature IIS
+        {
+            Ensure               = 'Absent'
+            Name                 = 'Web-Server'
+
+        }
     }
-
 }
