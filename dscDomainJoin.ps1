@@ -1,10 +1,5 @@
 Configuration dscDomainJoin
 {
-    param(
-        [Int]$RetryCount = 20,
-        [Int]$RetryIntervalSec = 30
-    )
-    
     Import-DscResource -ModuleName PSDesiredStateConfiguration
     Import-DscResource -ModuleName xComputerManagement    
     Import-DscResource -ModuleName xActiveDirectory
