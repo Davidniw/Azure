@@ -14,3 +14,12 @@ Configuration ComputerDomainJoin
         }
     }
 }
+$ConfigData = @{
+    AllNodes = @(
+        @{
+            NodeName = "DomainJoin"
+            PSDscAllowPlainTextPassword = $True
+            PSDscAllowDomainUser = $True
+        }
+    )
+}
