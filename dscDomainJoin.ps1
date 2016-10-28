@@ -25,7 +25,6 @@ Configuration dscDomainJoin
             Name = $Node.NodeName
             DomainName = $domainName
             Credential = $domainCreds
-            DependsOn = "[xWaitForADDomain]WaitForDomain" 
         }
     }
 }
