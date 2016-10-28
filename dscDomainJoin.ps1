@@ -29,7 +29,7 @@ Configuration dscDomainJoin
             DependsOn = "[WindowsFeature]ADPowershell" 
         }
 
-        xComputer DomainJoin
+        xComputer JoinDomain
         {
             Name = $Node.NodeName
             DomainName = $domainName
