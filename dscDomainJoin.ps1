@@ -18,20 +18,11 @@ Configuration dscDomainJoin
         {
             Name = "RSAT-AD-PowerShell"
             Ensure = "Present"
-        } 
-
-        xWaitForADDomain WaitForDomain 
-        { 
-            DomainName = $domainName 
-            DomainUserCredential= $domainCreds
-            RetryCount = $RetryCount 
-            RetryIntervalSec = $RetryIntervalSec
-            DependsOn = "[WindowsFeature]ADPowershell" 
         }
 
         xComputer JoinDomain
         {
-            Name = 'PRIVVMSNQAPE03'
+            Name = $Node.NodeName
             DomainName = $domainName
             Credential = $domainCreds
             DependsOn = "[xWaitForADDomain]WaitForDomain" 
