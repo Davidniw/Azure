@@ -31,7 +31,7 @@ Configuration dscDomainJoin
 
         xComputer JoinDomain
         {
-            Name = $Node.NodeName
+            Name = 'PRIVVMSNQAPE03'
             DomainName = $domainName
             Credential = $domainCreds
             DependsOn = "[xWaitForADDomain]WaitForDomain" 
