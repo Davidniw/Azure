@@ -22,7 +22,6 @@ Configuration dscDomainJoin
 
         xComputer JoinDomain
         {
-            Name                 = $Node.NodeName
             DomainName           = $domainName
             JoinOU               = "OU=PRD,OU=allServers,OU=allMachines,DC=ad,DC=rockend,DC=io"
             Credential           = $domainCreds
