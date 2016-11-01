@@ -16,15 +16,16 @@ Configuration dscDomainJoin
     {
         WindowsFeature ADPowershell
         {
-            Name = "RSAT-AD-PowerShell"
-            Ensure = "Present"
-        }
+            Name                 = "RSAT-AD-PowerShell"
+            Ensure               = "Present"
+        } 
 
         xComputer JoinDomain
         {
-            Name = $Node.NodeName
-            DomainName = $domainName
-            Credential = $domainCreds
+            Name                 = $Node.NodeName
+            DomainName           = $domainName
+            JoinOU               = "OU=PRD,OU=allServers,OU=allMachines,DC=ad,DC=rockend,DC=io"
+            Credential           = $domainCreds
         }
     }
 }
