@@ -22,7 +22,7 @@ configuration BuildFarm
     		DestinationPath = "C:\SQLInstall"
     		Credential = $storageCredential
     		Ensure = "Present"
-    		SourcePath = "\\prodrockcoresoftware.file.core.windows.net\Software\software\SQLJDBC"
+    		SourcePath = "\\prodrockcoresoftware.file.core.windows.net\software\Software\SQLJDBC"
     		Type = "Directory"
     		Recurse = $true
      	}
