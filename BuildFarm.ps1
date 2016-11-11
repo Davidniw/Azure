@@ -32,6 +32,7 @@ configuration BuildFarm
             Ensure      = "Present"
             Path        = "c:\sonarqube-6.0\bin\windows-x86-64\InstallNTService.bat"
             Name        = "sonarqube"
+            ProductId   = "ACDDCDAF-80C6-41E6-A1B9-8ABD8A05027E"
             DependsOn   = "[File]SQLBinaryDownload"
         }
         
