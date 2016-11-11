@@ -3,6 +3,7 @@ Configuration dscDomainJoin
     param(
         [Int]$RetryCount = 20,
         [Int]$RetryIntervalSec = 30
+        [string[]]$ComputerName="localhost"
     )
     
     Import-DscResource -ModuleName PSDesiredStateConfiguration
@@ -22,7 +23,7 @@ Configuration dscDomainJoin
 
         xComputer JoinDomain
         {
-            Name                 = $Node.NodeName
+            Name                 = $ComputerName
             DomainName           = $domainName
             JoinOU               = "OU=PRD,OU=allServers,OU=allMachines,DC=ad,DC=rockend,DC=io"
             Credential           = $domainCreds
