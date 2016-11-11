@@ -19,15 +19,22 @@ configuration BuildFarm
     {
     	File SQLBinaryDownload
     	{
-    		DestinationPath = "C:\SQLInstall"
+    		DestinationPath = "C:\sonarqube-6.0"
     		Credential = $storageCredential
     		Ensure = "Present"
-    		SourcePath = "\\prodrockcoresoftware.file.core.windows.net\software\Software\SQLJDBC"
+    		SourcePath = "\\prodrockcoresoftware.file.core.windows.net\software\Software\SonarQube\sonarqube-6.0\sonarqube-6.0"
     		Type = "Directory"
     		Recurse = $true
      	}
-
-
+        
+        Package PackageExample
+        {
+            Ensure      = "Present"
+            Path        = "c:\sonarqube-6.0\bin\windows-x86-64\InstallNTService.bat"
+            Name        = "sonarqube"
+            DependsOn   = "[File]SQLBinaryDownload"
+        }
+        
         LocalConfigurationManager 
         { 
             CertificateId = $node.Thumbprint 
