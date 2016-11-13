@@ -40,5 +40,3 @@ configuration BuildFarm
         }
     }
 }
-
-Invoke-Command -ScriptBlock {C:\sonarqube-6.0\bin\windows-x86-64\InstallNTService.bat}
