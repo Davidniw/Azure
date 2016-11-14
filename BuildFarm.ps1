@@ -72,6 +72,15 @@ configuration BuildFarm
      	}
         
         #Run "c:\sonarqube-6.0\sonarqube-6.0\bin\windows-x86-64\InstallNTService.bat"
+        #Machine needs to restart to refresh service
+        
+        Service SonarQube
+        {
+            Name        = "SonarQube"
+            StartupType = "Automatic"
+            State       = "Running"
+            DependsOn   = "[File]SonarQube"
+        }
         
         LocalConfigurationManager 
         { 
