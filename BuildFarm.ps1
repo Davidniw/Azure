@@ -16,6 +16,12 @@ configuration BuildFarm
     		Type = "Directory"
     		Recurse = $true
         }
+        
+        WindowsFeature IIS
+        {
+            Ensure               = 'Absent'
+            Name                 = 'Web-Server'
+        }
     }
 
     Node TeamCity
@@ -50,7 +56,6 @@ configuration BuildFarm
         {
             Ensure               = 'Absent'
             Name                 = 'Web-Server'
-
         }
     }
 
@@ -77,7 +82,6 @@ configuration BuildFarm
         {
             Ensure               = 'Absent'
             Name                 = 'Web-Server'
-
         }
     }
 }
