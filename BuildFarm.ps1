@@ -5,9 +5,9 @@ configuration BuildFarm
 
     $storageCredential = Get-AutomationPSCredential -Name 'storageCredential'
 
-    Node Kondike
+    Node Klondike
     {
-        File Kondike
+        File Klondike
         {
             DestinationPath = "c:\inetpub\wwwroot"
     		Credential = $storageCredential
