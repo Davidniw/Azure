@@ -5,6 +5,19 @@ configuration BuildFarm
 
     $storageCredential = Get-AutomationPSCredential -Name 'storageCredential'
 
+    Node Kondike
+    {
+        File Kondike
+        {
+            DestinationPath = "c:\inetpub\wwwroot"
+    		Credential = $storageCredential
+    		Ensure = "Present"
+    		SourcePath = "\\prodrockcoresoftware.file.core.windows.net\software\Software\klondike\RElease\Klondike-Release-master"
+    		Type = "Directory"
+    		Recurse = $true
+        }
+    }
+
     Node TeamCity
     {
         File TeamCity
@@ -13,7 +26,7 @@ configuration BuildFarm
     		Credential = $storageCredential
     		Ensure = "Present"
     		SourcePath = "\\prodrockcoresoftware.file.core.windows.net\software\Software\TeamCity\TeamCity-10.0.2.exe"
-    		Type = "Directory"
+    		Type = "File"
     		Recurse = $false
         }
         
@@ -23,7 +36,7 @@ configuration BuildFarm
     		Credential = $storageCredential
     		Ensure = "Present"
     		SourcePath = "\\prodrockcoresoftware.file.core.windows.net\software\Software\TeamCity\sqljdbc_4.2.6420.100_enu.exe.lnk"
-    		Type = "Directory"
+    		Type = "File"
     		Recurse = $false
         }
         
