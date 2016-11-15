@@ -5,6 +5,15 @@ configuration BuildFarm
 
     $storageCredential = Get-AutomationPSCredential -Name 'storageCredential'
 
+    Node JumpBox
+    {
+        WindowsFeature RoleExample
+        {
+            Ensure  = "Present"
+            Name    = "RDS-Gateway"
+        }
+    }
+
     Node Klondike
     {
         File Klondike
