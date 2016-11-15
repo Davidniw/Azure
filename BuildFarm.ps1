@@ -2,6 +2,7 @@ configuration BuildFarm
 { 
     
     Import-DscResource -ModuleName PSDesiredStateConfiguration
+    Import-DscResource -ModuleName AzureRM.KeyVault
     
     #param for keyvault = svcSonarQubeDB
 
