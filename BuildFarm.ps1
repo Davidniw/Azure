@@ -19,6 +19,7 @@ configuration BuildFarm
         {
             Ensure  = "Present"
             Name    = "RDS-Gateway"
+            IncludeAllSubFeature = $true
         }
     }
 
