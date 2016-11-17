@@ -93,11 +93,13 @@ configuration BuildFarm
         
         Service SonarQube
         {
-            Name        = "SonarQube"
-            StartupType = "Automatic"
-            Credential  = $sonarQubeCredential
-            State       = "Running"
-            DependsOn   = "[File]SonarQube"
+            BuiltInAccount      = "LocalService"
+            Name                = "SonarQube"
+            DisplayName         = "SonarQube"
+            StartupType         = "Automatic"
+            # Credential  = $sonarQubeCredential (Commented to test BuiltInAccount)
+            State               = "Running"
+            DependsOn           = "[File]SonarQube"
         }
         
         LocalConfigurationManager 
