@@ -7,10 +7,11 @@ configuration BuildFarm
     #param for keyvault = svcSonarQubeDB
 
     $storageCredential = Get-AutomationPSCredential -Name 'storageCredential'
-    $sonarQubeSecret = (Get-AzureKeyVaultSecret -VaultName prod-rock-core-keyVault -Name svcSonarQubeDB).SecretValueText
+    $sonarQubeCredential = Get-AutomationPSCredential -Name 'svcSonarQubeDB'
+    #$sonarQubeSecret = (Get-AzureKeyVaultSecret -VaultName prod-rock-core-keyVault -Name svcSonarQubeDB).SecretValueText
     #create credential hash table
-    $SonarQubePass = ConvertTo-SecureString $sonarQubeSecret -AsPlainText -Force
-    $SonarQubeCreds = New-Object System.Management.Automation.PSCredential (“svcSonarQubeDB@cloud.rockend.io”, $SonarQubePass)
+    #$SonarQubePass = ConvertTo-SecureString $sonarQubeSecret -AsPlainText -Force
+    #$SonarQubeCreds = New-Object System.Management.Automation.PSCredential (“svcSonarQubeDB@cloud.rockend.io”, $SonarQubePass)
 
     Node JumpBox
     {
@@ -94,7 +95,7 @@ configuration BuildFarm
         {
             Name        = "SonarQube"
             StartupType = "Automatic"
-            Credential  = $SonarQubeCreds
+            Credential  = $sonarQubeCredential
             State       = "Running"
             DependsOn   = "[File]SonarQube"
         }
