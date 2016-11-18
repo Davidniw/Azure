@@ -1,6 +1,6 @@
 configuration BuildFarm
 { 
-    
+    Import-DscResource -Name MSFT_xServiceResource -ModuleName xPSDesiredStateConfiguration
     Import-DscResource -ModuleName PSDesiredStateConfiguration
     Import-DscResource -ModuleName AzureRM.KeyVault
     
@@ -107,20 +107,20 @@ configuration BuildFarm
         {
             Ensure              = "Present"
             Path                = "$Env:SystemDrive\software\Java\JDK\jdk-8u101-windows-x64.exe"
-            Name                = "jdk1.8"
-            ProductId           = "64A3A4F4-B792-11D6-A78A-00B0D0180112"
+            Name                = "Java SE Development Kit 8 Update 101 (64-bit)"
+            ProductId           = "64A3A4F4-B792-11D6-A78A-00B0D0180101"
             DependsOn           = "[File]JDK"
         } 
 
         
-        Service SonarQube
+        xService SonarQube
         {
             Name                = "SonarQube"
             DisplayName         = "SonarQube"
             StartupType         = "Automatic"
             Credential          = $sonarQubeCredential
             State               = "Running"
-            DependsOn           = "[File]SonarQube"
+            DependsOn           = "[Package]JDK"
         }
         
         LocalConfigurationManager 
