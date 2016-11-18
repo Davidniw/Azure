@@ -120,7 +120,7 @@ configuration BuildFarm
             StartupType         = "Automatic"
             Credential          = $sonarQubeCredential
             State               = "Running"
-            DependsOn           = "[File]SonarQube;[Package]JDK"
+            DependsOn           = "[File]SonarQube"
         }
         
         LocalConfigurationManager 
