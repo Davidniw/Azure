@@ -92,13 +92,33 @@ configuration BuildFarm
         #Run "c:\sonarqube-6.0\sonarqube-6.0\bin\windows-x86-64\InstallNTService.bat"
         #Machine needs to restart to refresh service
         
+        #Copy JDK install from storage account
+        File JDK
+    	{
+    		DestinationPath     = "C:\software\Java\JDK"
+    		Credential          = $storageCredential
+    		Ensure              = "Present"
+    		SourcePath          = "\\prodrockcoresoftware.file.core.windows.net\software\Software\Jdk1.8\"
+    		Type                = "Directory"
+    		Recurse             = $true
+     	}
+
+        Package JDK
+        {
+            Ensure              = "Present"
+            Path                = "$Env:SystemDrive\software\Java\JDK\jdk-8u101-windows-x64.exe"
+            Name                = "jdk1.8"
+            ProductId           = "64A3A4F4-B792-11D6-A78A-00B0D0180112"
+            DependsOn           = "[File]JDK"
+        } 
+
+        
         Service SonarQube
         {
-            BuiltInAccount      = "LocalService"
             Name                = "SonarQube"
             DisplayName         = "SonarQube"
             StartupType         = "Automatic"
-            # Credential  = $sonarQubeCredential (Commented to test BuiltInAccount)
+            Credential          = $sonarQubeCredential
             State               = "Running"
             DependsOn           = "[File]SonarQube"
         }
