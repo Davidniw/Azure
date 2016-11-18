@@ -138,8 +138,16 @@ configuration BuildFarm
             Name                = "Java SE Development Kit 8 Update 101 (64-bit)"
             ProductId           = "64A3A4F4-B792-11D6-A78A-00B0D0180101"
             DependsOn           = "[File]JDK"
-        } 
+        }
 
+        Environment JavaPath
+        {
+            Name                = "Java Path"
+            Ensure              = "Present"
+            Path                = $true
+            Value               = "C:\Program Files\Java\jdk1.8.0_101\bin"
+            DependsOn           = "[Package]JDK"
+        }
         
         xService SonarQube
         {
@@ -148,7 +156,7 @@ configuration BuildFarm
             StartupType         = "Automatic"
             Credential          = $sonarQubeCredential
             State               = "Running"
-            DependsOn           = "[Package]JDK"
+            DependsOn           = "[Environment]JavaPath"
         }
         
         LocalConfigurationManager 
