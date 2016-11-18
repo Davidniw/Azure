@@ -15,10 +15,38 @@ configuration BuildFarm
 
     Node JumpBox
     {
-        WindowsFeature RoleExample
+        WindowsFeature RDSGateway
         {
             Ensure  = "Present"
             Name    = "RDS-Gateway"
+            IncludeAllSubFeature = $true
+        }
+        
+        WindowsFeature IIS6ManagementConsole
+        {
+            Ensure  = "Present"
+            Name    = "Web-Lgcy-Mgmt-Console"
+            IncludeAllSubFeature = $true
+        }
+        
+        WindowsFeature ADDAandADLDSTools 
+        {
+            Ensure  = "Present"
+            Name    = "RSAT-AD-Tools"
+            IncludeAllSubFeature = $true
+        }
+        
+        WindowsFeature RemoteDesktopGatewayTools 
+        {
+            Ensure  = "Present"
+            Name    = "RSAT-RDS-Gateway"
+            IncludeAllSubFeature = $true
+        }
+        
+        WindowsFeature NetworkPolicyandAccessServicesTools 
+        {
+            Ensure  = "Present"
+            Name    = "RSAT-NPAS"
             IncludeAllSubFeature = $true
         }
     }
