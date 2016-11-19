@@ -67,15 +67,15 @@ configuration BuildFarm
             Recurse = $false
         }
         
-        File BuildTools2013
-        {
-            DestinationPath = "c:\software\Microsoft\BuildTools"
-            Credential = $storageCredential
-            Ensure = "Present"
-            SourcePath = "\\prodevgcoresoftwareape.file.core.windows.net\software\Software\TeamCity\BuildTools_2013_Full.exe"
-            Type = "File"
-            Recurse = $false
-        }
+        #File BuildTools2013
+        #{
+        #    DestinationPath = "c:\software\Microsoft\BuildTools"
+        #    Credential = $storageCredential
+        #    Ensure = "Present"
+        #    SourcePath = "\\prodevgcoresoftwareape.file.core.windows.net\software\Software\TeamCity\BuildTools_2013_Full.exe"
+        #    Type = "File"
+        #    Recurse = $false
+        #}
         
         File BuildTools2015
         {
@@ -87,34 +87,34 @@ configuration BuildFarm
             Recurse = $false
         }
         
-        File BuildTools2015
+        File Plugins
         {
             DestinationPath = "c:\software\Jetbrains\TeamCity\Plugins"
             Credential = $storageCredential
             Ensure = "Present"
             SourcePath = "\\prodevgcoresoftwareape.file.core.windows.net\software\Software\TeamCity\Plugins"
             Type = "Directory"
-            Recurse = $false
+            Recurse = $true
         }
         
-        File BuildTools2015
+        File Config
         {
             DestinationPath = "c:\software\Jetbrains\TeamCity\Config"
             Credential = $storageCredential
             Ensure = "Present"
             SourcePath = "\\prodevgcoresoftwareape.file.core.windows.net\software\Software\TeamCity\Config"
             Type = "Directory"
-            Recurse = $false
+            Recurse = $true
         }
         
-        File BuildTools2015
+        File stuff
         {
             DestinationPath = "c:\software\Jetbrains\TeamCity\stuff"
             Credential = $storageCredential
             Ensure = "Present"
             SourcePath = "\\prodevgcoresoftwareape.file.core.windows.net\software\Software\TeamCity\stuff"
             Type = "Directory"
-            Recurse = $false
+            Recurse = $true
         }
         
         WindowsFeature IIS
