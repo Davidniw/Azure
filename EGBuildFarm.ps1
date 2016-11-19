@@ -89,7 +89,7 @@ configuration BuildFarm
         
         File Plugins
         {
-            DestinationPath = "c:\software\Jetbrains\TeamCity\Plugins"
+            DestinationPath = "c:\software\Jetbrains\TeamCity"
             Credential = $storageCredential
             Ensure = "Present"
             SourcePath = "\\prodevgcoresoftwareape.file.core.windows.net\software\Software\TeamCity\Plugins"
@@ -99,7 +99,7 @@ configuration BuildFarm
         
         File Config
         {
-            DestinationPath = "c:\software\Jetbrains\TeamCity\Config"
+            DestinationPath = "c:\software\Jetbrains\TeamCity"
             Credential = $storageCredential
             Ensure = "Present"
             SourcePath = "\\prodevgcoresoftwareape.file.core.windows.net\software\Software\TeamCity\Config"
@@ -109,7 +109,7 @@ configuration BuildFarm
         
         File stuff
         {
-            DestinationPath = "c:\software\Jetbrains\TeamCity\stuff"
+            DestinationPath = "c:\software\Jetbrains\TeamCity"
             Credential = $storageCredential
             Ensure = "Present"
             SourcePath = "\\prodevgcoresoftwareape.file.core.windows.net\software\Software\TeamCity\stuff"
