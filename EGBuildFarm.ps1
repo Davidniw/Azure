@@ -4,7 +4,7 @@ configuration BuildFarm
     Import-DscResource -ModuleName PSDesiredStateConfiguration
     Import-DscResource -ModuleName AzureRM.KeyVault
 
-    $storageCredential = Get-AutomationPSCredential -Name 'storageCredential'
+    $storageCredential = Get-AutomationPSCredential -Name 'prodevgcoresoftwareape'
 
 
     Node JumpBox
