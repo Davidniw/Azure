@@ -77,25 +77,25 @@ configuration BuildFarm
         #    Recurse = $false
         #}
         
-        File BuildTools2015
-        {
-            DestinationPath = "c:\software\Microsoft\BuildTools"
-            Credential = $storageCredential
-            Ensure = "Present"
-            SourcePath = "\\prodevgcoresoftwareape.file.core.windows.net\software\Software\TeamCity\BuildTools_2015_Full.exe"
-            Type = "File"
-            Recurse = $false
-        }
-        
-        #File Plugins
+        #File BuildTools2015
         #{
-        #    DestinationPath = "c:\software\Jetbrains\TeamCity"
+        #    DestinationPath = "c:\software\Microsoft\BuildTools"
         #    Credential = $storageCredential
         #    Ensure = "Present"
-        #    SourcePath = "\\prodevgcoresoftwareape.file.core.windows.net\software\Software\TeamCity\Plugins"
-        #    Type = "Directory"
-        #    Recurse = $true
+        #    SourcePath = "\\prodevgcoresoftwareape.file.core.windows.net\software\Software\TeamCity\BuildTools_2015_Full.exe"
+        #    Type = "File"
+        #    Recurse = $false
         #}
+        
+        File Plugins
+        {
+            DestinationPath = "c:\software\Jetbrains\TeamCity"
+            Credential = $storageCredential
+            Ensure = "Present"
+            SourcePath = "\\prodevgcoresoftwareape.file.core.windows.net\software\Software\TeamCity\Plugins"
+            Type = "Directory"
+            Recurse = $true
+        }
         
         File Config
         {
