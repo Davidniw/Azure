@@ -87,16 +87,15 @@ configuration BuildFarm
             Recurse = $false
         }
         
-        File Plugins
-        {
-            DestinationPath = "c:\software\Jetbrains\TeamCity"
-            Credential = $storageCredential
-            Ensure = "Present"
-            SourcePath = "\\prodevgcoresoftwareape.file.core.windows.net\software\Software\TeamCity\Plugins"
-            Type = "Directory"
-            Recurse = $true
-            DependsOn = "[File]TeamCity"
-        }
+        #File Plugins
+        #{
+        #    DestinationPath = "c:\software\Jetbrains\TeamCity"
+        #    Credential = $storageCredential
+        #    Ensure = "Present"
+        #    SourcePath = "\\prodevgcoresoftwareape.file.core.windows.net\software\Software\TeamCity\Plugins"
+        #    Type = "Directory"
+        #    Recurse = $true
+        #}
         
         File Config
         {
@@ -106,7 +105,6 @@ configuration BuildFarm
             SourcePath = "\\prodevgcoresoftwareape.file.core.windows.net\software\Software\TeamCity\Config"
             Type = "Directory"
             Recurse = $true
-            DependsOn = "[File]Plugins"
         }
         
         File stuff
@@ -117,7 +115,6 @@ configuration BuildFarm
             SourcePath = "\\prodevgcoresoftwareape.file.core.windows.net\software\Software\TeamCity\stuff"
             Type = "Directory"
             Recurse = $true
-            DependsOn = "[File]Config"
         }
         
         WindowsFeature IIS
