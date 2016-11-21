@@ -124,7 +124,7 @@ configuration BuildFarm
     		Ensure              = "Present"
     		SourcePath          = "\\prodrockcoresoftware.file.core.windows.net\software\Software\sqlJDBC\Microsoft JDBC Driver 4.2 for SQL Server\sqljdbc_4.2\enu\auth\x64"
     		Type                = "Directory"
-    		Recurse             = $false
+    		Recurse             = $true
             DependsOn           = "[File]SonarQube"
      	}
         
@@ -135,7 +135,7 @@ configuration BuildFarm
     		Ensure              = "Present"
     		SourcePath          = "\\prodrockcoresoftware.file.core.windows.net\software\Software\SonarQube\plugins"
     		Type                = "Directory"
-    		Recurse             = $false
+    		Recurse             = $true
             DependsOn           = "[File]SonarQube"
      	}
         
