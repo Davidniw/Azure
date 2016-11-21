@@ -117,6 +117,28 @@ configuration BuildFarm
     		Recurse = $true
      	}
         
+        File sqljdbc
+    	{
+    		DestinationPath     = "C:\Windows\System32"
+    		Credential          = $storageCredential
+    		Ensure              = "Present"
+    		SourcePath          = "\\prodrockcoresoftware.file.core.windows.net\software\Software\sqlJDBC\Microsoft JDBC Driver 4.2 for SQL Server\sqljdbc_4.2\enu\auth\x64"
+    		Type                = "Directory"
+    		Recurse             = $false
+            DependsOn           = "[File]SonarQube"
+     	}
+        
+        File SonarQubePlugins
+    	{
+    		DestinationPath     = "C:\sonarqube-6.0\sonarqube-6.0\extensions\plugins"
+    		Credential          = $storageCredential
+    		Ensure              = "Present"
+    		SourcePath          = "\\prodrockcoresoftware.file.core.windows.net\software\Software\SonarQube\plugins"
+    		Type                = "Directory"
+    		Recurse             = $false
+            DependsOn           = "[File]SonarQube"
+     	}
+        
         #Run "c:\sonarqube-6.0\sonarqube-6.0\bin\windows-x86-64\InstallNTService.bat"
         #Machine needs to restart to refresh service
         
@@ -156,7 +178,7 @@ configuration BuildFarm
             StartupType         = "Automatic"
             Credential          = $sonarQubeCredential
             State               = "Running"
-            DependsOn           = "[Environment]JavaPath"
+            DependsOn           = "[Environment]JavaPath;[File]SonarQubePlugins;[File]sqljdbc"
         }
         
         LocalConfigurationManager 
