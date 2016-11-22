@@ -191,16 +191,16 @@ configuration BuildFarm
         }
         
         #C:\sonarqube-6.0\sonarqube-6.0\bin\windows-x86-64\InstallNTService.bat
-        xPackage InstallSonarQube
-        {
-            Ensure              = 'Present'
-            Name                = 'InstallNTService'
-            Path                = 'C:\sonarqube-6.0\sonarqube-6.0\bin\windows-x86-64\InstallNTService.bat'
-            PsDscRunAsCredential= $sonarQubeCredential
-            Credential          = $sonarQubeCredential
-            DependsOn           = '[cNtfsPermissionEntry]svcSonarQubeDbPermission'
-            
-        }
+        #xPackage InstallSonarQube
+        #{
+        #    Ensure              = 'Present'
+        #    Name                = 'InstallNTService'
+        #    Path                = 'C:\sonarqube-6.0\sonarqube-6.0\bin\windows-x86-64\InstallNTService.bat'
+        #    PsDscRunAsCredential= $sonarQubeCredential
+        #    Credential          = $sonarQubeCredential
+        #    DependsOn           = '[cNtfsPermissionEntry]svcSonarQubeDbPermission'
+        #    
+        #}
         #C:\sonarqube-6.0\sonarqube-6.0\bin\windows-x86-64\StartSonar.bat
         xService SonarQube
         {
@@ -208,7 +208,7 @@ configuration BuildFarm
             DisplayName         = 'SonarQube'
             StartupType         = 'Automatic'
             Credential          = $sonarQubeCredential
-            BuiltInAccount      = $sonarQubeCredential
+            #BuiltInAccount      = $sonarQubeCredential
             State               = 'Running'
             DependsOn           = '[xPackage]InstallSonarQube'
         }
