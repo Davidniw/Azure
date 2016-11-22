@@ -196,8 +196,8 @@ configuration BuildFarm
             Ensure              = 'Present'
             Name                = 'InstallNTService'
             Path                = 'C:\sonarqube-6.0\sonarqube-6.0\bin\windows-x86-64\InstallNTService.bat'
-            RunAsCredential     = $sonarQubeCredential
-            Credentials         = $sonarQubeCredential
+            PsDscRunAsCredential= $sonarQubeCredential
+            Credential          = $sonarQubeCredential
             DependsOn           = '[cNtfsPermissionEntry]svcSonarQubeDbPermission'
             
         }
