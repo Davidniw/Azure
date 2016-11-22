@@ -185,7 +185,7 @@ configuration BuildFarm
                     Inheritance = 'ThisFolderSubfoldersAndFiles'
                     NoPropagateInherit = $false
                 }
-            
+            )
             DependsOn           = '[File]SonarQube'
         }
         
