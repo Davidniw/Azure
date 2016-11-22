@@ -210,7 +210,7 @@ configuration BuildFarm
             Credential          = $sonarQubeCredential
             #BuiltInAccount      = $sonarQubeCredential
             State               = 'Running'
-            DependsOn           = '[xPackage]InstallSonarQube'
+            DependsOn           = '[cNtfsPermissionEntry]svcSonarQubeDbPermission'
         }
         
         LocalConfigurationManager 
