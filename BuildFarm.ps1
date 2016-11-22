@@ -165,18 +165,18 @@ configuration BuildFarm
 
         Environment JavaPath
         {
-            Name                = "Path"
-            Ensure              = "Present"
+            Name                = 'Path'
+            Ensure              = 'Present'
             Path                = $true
-            Value               = "C:\Program Files\Java\jdk1.8.0_101\bin"
-            DependsOn           = "[Package]JDK"
+            Value               = 'C:\Program Files\Java\jdk1.8.0_101\bin'
+            DependsOn           = '[Package]JDK'
         }
         
         cNtfsPermissionEntry svcSonarQubeDbPermission
         {
-            Ensure              = "Present"
-            Path                = "C:\sonarqube-6.0\"
-            Principal           = "svcSonarQubeDb@cloud.rockend.io"
+            Ensure              = 'Present'
+            Path                = 'C:\sonarqube-6.0\'
+            Principal           = 'svcSonarQubeDb@cloud.rockend.io'
             AccessControlInformation = @(
                 cNtfsAccessControlInformation
                 {
@@ -185,30 +185,31 @@ configuration BuildFarm
                     Inheritance = 'ThisFolderSubfoldersAndFiles'
                     NoPropagateInherit = $false
                 }
-            DependsOn           = "[File]SonarQube"
+            
+            DependsOn           = '[File]SonarQube'
         }
         
         #C:\sonarqube-6.0\sonarqube-6.0\bin\windows-x86-64\InstallNTService.bat
         xPackage InstallSonarQube
         {
-            Ensure              = "Present"
-            Name                = "InstallNTService"
-            Path                = "C:\sonarqube-6.0\sonarqube-6.0\bin\windows-x86-64\InstallNTService.bat"
+            Ensure              = 'Present'
+            Name                = 'InstallNTService'
+            Path                = 'C:\sonarqube-6.0\sonarqube-6.0\bin\windows-x86-64\InstallNTService.bat'
             RunAsCredential     = $sonarQubeCredential
             Credentials         = $sonarQubeCredential
-            DependsOn           = "[cNtfsPermissionEntry]svcSonarQubeDbPermission"
+            DependsOn           = '[cNtfsPermissionEntry]svcSonarQubeDbPermission'
             
         }
         #C:\sonarqube-6.0\sonarqube-6.0\bin\windows-x86-64\StartSonar.bat
         xService SonarQube
         {
-            Name                = "SonarQube"
-            DisplayName         = "SonarQube"
-            StartupType         = "Automatic"
+            Name                = 'SonarQube'
+            DisplayName         = 'SonarQube'
+            StartupType         = 'Automatic'
             Credential          = $sonarQubeCredential
             BuiltInAccount      = $sonarQubeCredential
-            State               = "Running"
-            DependsOn           = "[xPackage]InstallSonarQube"
+            State               = 'Running'
+            DependsOn           = '[xPackage]InstallSonarQube'
         }
         
         LocalConfigurationManager 
