@@ -3,6 +3,7 @@ configuration BuildFarm
     Import-DscResource -Name MSFT_xServiceResource -ModuleName xPSDesiredStateConfiguration
     Import-DscResource -ModuleName PSDesiredStateConfiguration
     Import-DscResource -ModuleName AzureRM.KeyVault
+    Import-DscResource -Module cNtfsAccessControl
     
     #param for keyvault = svcSonarQubeDB
 
@@ -109,12 +110,12 @@ configuration BuildFarm
     {
     	File SonarQube
     	{
-    		DestinationPath = "C:\sonarqube-6.0\sonarqube-6.0"
-    		Credential = $storageCredential
-    		Ensure = "Present"
-    		SourcePath = "\\prodrockcoresoftware.file.core.windows.net\software\Software\SonarQube\sonarqube-6.0\sonarqube-6.0"
-    		Type = "Directory"
-    		Recurse = $true
+    		DestinationPath         = "C:\sonarqube-6.0\sonarqube-6.0"
+    		Credential              = $storageCredential
+    		Ensure                  = "Present"
+    		SourcePath              = "\\prodrockcoresoftware.file.core.windows.net\software\Software\SonarQube\sonarqube-6.0\sonarqube-6.0"
+    		Type                    = "Directory"
+    		Recurse                 = $true
      	}
         
         File sqljdbc
@@ -164,21 +165,50 @@ configuration BuildFarm
 
         Environment JavaPath
         {
-            Name                = "Java Path"
+            Name                = "Path"
             Ensure              = "Present"
             Path                = $true
             Value               = "C:\Program Files\Java\jdk1.8.0_101\bin"
             DependsOn           = "[Package]JDK"
         }
         
+        cNtfsPermissionEntry svcSonarQubeDbPermission
+        {
+            Ensure              = "Present"
+            Path                = "C:\sonarqube-6.0\"
+            Principal           = "svcSonarQubeDb@cloud.rockend.io"
+            AccessControlInformation = @(
+                cNtfsAccessControlInformation
+                {
+                    AccessControlType = 'Allow'
+                    FileSystemRights = 'Modify'
+                    Inheritance = 'ThisFolderSubfoldersAndFiles'
+                    NoPropagateInherit = $false
+                }
+            DependsOn           = "[File]SonarQube"
+        }
+        
+        #C:\sonarqube-6.0\sonarqube-6.0\bin\windows-x86-64\InstallNTService.bat
+        xPackage InstallSonarQube
+        {
+            Ensure              = "Present"
+            Name                = "InstallNTService"
+            Path                = "C:\sonarqube-6.0\sonarqube-6.0\bin\windows-x86-64\InstallNTService.bat"
+            RunAsCredential     = $sonarQubeCredential
+            Credentials         = $sonarQubeCredential
+            DependsOn           = "[cNtfsPermissionEntry]svcSonarQubeDbPermission"
+            
+        }
+        #C:\sonarqube-6.0\sonarqube-6.0\bin\windows-x86-64\StartSonar.bat
         xService SonarQube
         {
             Name                = "SonarQube"
             DisplayName         = "SonarQube"
             StartupType         = "Automatic"
             Credential          = $sonarQubeCredential
+            BuiltInAccount      = $sonarQubeCredential
             State               = "Running"
-            DependsOn           = "[Environment]JavaPath"
+            DependsOn           = "[xPackage]InstallSonarQube"
         }
         
         LocalConfigurationManager 
