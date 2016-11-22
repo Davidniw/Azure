@@ -1,9 +1,10 @@
 configuration BuildFarm
 { 
-    Import-DscResource -ModuleName xPSDesiredStateConfiguration
+    Import-DscResource -Name MSFT_xServiceResource -ModuleName xPSDesiredStateConfiguration
     Import-DscResource -ModuleName PSDesiredStateConfiguration
     Import-DscResource -ModuleName AzureRM.KeyVault
     Import-DscResource -Module cNtfsAccessControl
+    Import-DscResource -Module xPSDesiredStateConfiguration
     
     #param for keyvault = svcSonarQubeDB
 
