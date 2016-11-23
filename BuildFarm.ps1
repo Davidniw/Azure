@@ -10,13 +10,13 @@ configuration BuildFarm
     param(
         [Parameter(Mandatory=$true)]
         [ValidateNotNullorEmpty()]
-        [String]
-        $computerName
+        [String]$computerName
     )
     #param for keyvault = svcSonarQubeDB
 
     $storageCredential = Get-AutomationPSCredential -Name 'storageCredential'
     $sonarQubeCredential = Get-AutomationPSCredential -Name 'svcSonarQubeDB'
+    $slackCredential = Get-AutomationPSCredential -Name 'slackCredential'
     #$sonarQubeSecret = (Get-AzureKeyVaultSecret -VaultName prod-rock-core-keyVault -Name svcSonarQubeDB).SecretValueText
     #create credential hash table
     #$SonarQubePass = ConvertTo-SecureString $sonarQubeSecret -AsPlainText -Force
@@ -118,7 +118,7 @@ configuration BuildFarm
     {
         SlackMessage TrySlack {
             UserName = "david.niwczyk@rockend.com.au"
-            Token    = "xoxp-6243804465-6775418560-107878347249-13a47e73100f77f71978d7c7f2158400"
+            Token    = $slackCredential.credential
             Channel  = "builds-devops"
             Text     = "Greetings and salutations from powershell DSC"
         }
