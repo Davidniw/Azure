@@ -1,5 +1,10 @@
 configuration BuildFarm
 { 
+
+    param(
+        [string]$computerName
+    )
+
     Import-DscResource -Name MSFT_xServiceResource -ModuleName xPSDesiredStateConfiguration
     Import-DscResource -ModuleName PSDesiredStateConfiguration
     Import-DscResource -ModuleName AzureRM.KeyVault
@@ -7,11 +12,6 @@ configuration BuildFarm
     Import-DscResource -Module xPSDesiredStateConfiguration
     Import-DSCResource -ModuleName SlackDSCResource
     
-    param(
-        [Parameter(Mandatory=$true)]
-        [ValidateNotNullorEmpty()]
-        [String]$computerName
-    )
     #param for keyvault = svcSonarQubeDB
 
     $storageCredential = Get-AutomationPSCredential -Name 'storageCredential'
