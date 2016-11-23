@@ -22,13 +22,6 @@ configuration BuildFarm
     #$SonarQubePass = ConvertTo-SecureString $sonarQubeSecret -AsPlainText -Force
     #$SonarQubeCreds = New-Object System.Management.Automation.PSCredential (“svcSonarQubeDB@cloud.rockend.io”, $SonarQubePass)
 
-    SlackMessage TrySlack {
-        UserName = "david.niwczyk@rockend.com.au"
-        Token    = "xoxp-6243804465-6775418560-107878347249-13a47e73100f77f71978d7c7f2158400"
-        Channel  = "builds-devops"
-        Text     = "Hello Slack from PowerShell"
-    }
-
     Node JumpBox
     {
         WindowsFeature RDSGateway
@@ -123,6 +116,13 @@ configuration BuildFarm
 
     Node SonarQube
     {
+        SlackMessage TrySlack {
+            UserName = "david.niwczyk@rockend.com.au"
+            Token    = "xoxp-6243804465-6775418560-107878347249-13a47e73100f77f71978d7c7f2158400"
+            Channel  = "builds-devops"
+            Text     = "Greetings and salutations from powershell DSC"
+        }
+    
     	File SonarQube
     	{
     		DestinationPath         = "C:\sonarqube-6.0\sonarqube-6.0"
