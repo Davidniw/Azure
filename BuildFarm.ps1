@@ -5,7 +5,14 @@ configuration BuildFarm
     Import-DscResource -ModuleName AzureRM.KeyVault
     Import-DscResource -Module cNtfsAccessControl
     Import-DscResource -Module xPSDesiredStateConfiguration
+    Import-DSCResource -ModuleName SlackDSCResource
     
+    param(
+        [Parameter(Mandatory=$true)]
+        [ValidateNotNullorEmpty()]
+        [String]
+        $nodeName
+    )
     #param for keyvault = svcSonarQubeDB
 
     $storageCredential = Get-AutomationPSCredential -Name 'storageCredential'
@@ -14,6 +21,13 @@ configuration BuildFarm
     #create credential hash table
     #$SonarQubePass = ConvertTo-SecureString $sonarQubeSecret -AsPlainText -Force
     #$SonarQubeCreds = New-Object System.Management.Automation.PSCredential (“svcSonarQubeDB@cloud.rockend.io”, $SonarQubePass)
+
+    SlackMessage TrySlack {
+        UserName = "david.niwczyk@rockend.com.au"
+        Token    = "xoxp-6243804465-6775418560-107878347249-13a47e73100f77f71978d7c7f2158400"
+        Channel  = "builds-devops"
+        Text     = "Hello Slack from PowerShell"
+    }
 
     Node JumpBox
     {
