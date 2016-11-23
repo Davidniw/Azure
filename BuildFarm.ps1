@@ -11,7 +11,7 @@ configuration BuildFarm
         [Parameter(Mandatory=$true)]
         [ValidateNotNullorEmpty()]
         [String]
-        $nodeName
+        $computerName
     )
     #param for keyvault = svcSonarQubeDB
 
