@@ -16,7 +16,7 @@ configuration BuildFarm
 
     $storageCredential = Get-AutomationPSCredential -Name 'storageCredential'
     $sonarQubeCredential = Get-AutomationPSCredential -Name 'svcSonarQubeDB'
-    $slackCredential = Get-AutomationPSCredential -Name 'slackCredential'
+    $slackToken = Get-AutomationPSVariable -Name 'slackToken'
     #$sonarQubeSecret = (Get-AzureKeyVaultSecret -VaultName prod-rock-core-keyVault -Name svcSonarQubeDB).SecretValueText
     #create credential hash table
     #$SonarQubePass = ConvertTo-SecureString $sonarQubeSecret -AsPlainText -Force
@@ -223,7 +223,7 @@ configuration BuildFarm
     }
     
     Invoke-RestMethod -Uri https://slack.com/api/chat.postMessage -Body @{
-    token    = $slackCredential.password
+    token    = $slackToken
     channel  = "#builds-devops"
     username = "Azure DSC"
     text     = "$("SonarQube DSC running on") $($computerName)"
