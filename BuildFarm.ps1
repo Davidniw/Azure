@@ -13,7 +13,7 @@ configuration BuildFarm
     Import-DSCResource -ModuleName SlackDSCResource
     
     #param for keyvault = svcSonarQubeDB
-
+    $nodeName = Get-AzureRmAutomationDscNode
     $storageCredential = Get-AutomationPSCredential -Name 'storageCredential'
     $sonarQubeCredential = Get-AutomationPSCredential -Name 'svcSonarQubeDB'
     $slackToken = Get-AutomationVariable -Name 'slackToken'
@@ -226,6 +226,6 @@ configuration BuildFarm
     token    = $slackToken
     channel  = "#builds-devops"
     username = "Azure DSC"
-    text     = "$("SonarQube DSC running on") $($computerName)"
+    text     = "$("SonarQube DSC running on") $($computerName) $($nodeName)"
     }
 }
