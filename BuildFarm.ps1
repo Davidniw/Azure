@@ -119,8 +119,8 @@ configuration BuildFarm
         SlackMessage TrySlack 
         {
             UserName = "david.niwczyk@rockend.com.au"
-            Token    = $slackCredential
-            Channel  = "builds-devops"
+            Token    = $slackCredential.password
+            Channel  = "#builds-devops"
             Text     = "Greetings and salutations from powershell DSC"
         }
     
