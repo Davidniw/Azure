@@ -16,7 +16,7 @@ configuration BuildFarm
 
     $storageCredential = Get-AutomationPSCredential -Name 'storageCredential'
     $sonarQubeCredential = Get-AutomationPSCredential -Name 'svcSonarQubeDB'
-    $slackToken = Get-AutomationPSVariable -Name 'slackToken'
+    $slackToken = Get-AutomationVariable -Name 'slackToken'
     #$sonarQubeSecret = (Get-AzureKeyVaultSecret -VaultName prod-rock-core-keyVault -Name svcSonarQubeDB).SecretValueText
     #create credential hash table
     #$SonarQubePass = ConvertTo-SecureString $sonarQubeSecret -AsPlainText -Force
