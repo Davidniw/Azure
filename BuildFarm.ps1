@@ -13,7 +13,6 @@ configuration BuildFarm
     Import-DSCResource -ModuleName SlackDSCResource
     
     #param for keyvault = svcSonarQubeDB
-    $nodeName = Get-AzureVM
     $storageCredential = Get-AutomationPSCredential -Name 'storageCredential'
     $sonarQubeCredential = Get-AutomationPSCredential -Name 'svcSonarQubeDB'
     $slackToken = Get-AutomationVariable -Name 'slackToken'
@@ -224,8 +223,8 @@ configuration BuildFarm
     
     Invoke-RestMethod -Uri https://slack.com/api/chat.postMessage -Body @{
     token    = $slackToken
-    channel  = "#builds-devops"
+    channel  = "@david.niwczyk"
     username = "Azure DSC"
-    text     = "$("SonarQube DSC running on") $($computerName) $($nodeName)"
+    text     = "$("SonarQube DSC running on") $($computerName)"
     }
 }
