@@ -115,7 +115,14 @@ configuration BuildFarm
 
     Node SonarQube
     {
-    
+        Invoke-RestMethod -Uri https://slack.com/api/chat.postMessage -Body 
+        @{
+            token    = $slackToken
+            channel  = "@david.niwczyk"
+            username = "Azure DSC"
+            text     = "$("SonarQube DSC running on") $($computerName)"
+        }
+        
     	File SonarQube
     	{
     		DestinationPath         = "C:\sonarqube-6.0\sonarqube-6.0"
@@ -219,12 +226,5 @@ configuration BuildFarm
             Ensure               = 'Absent'
             Name                 = 'Web-Server'
         }
-    }
-    
-    Invoke-RestMethod -Uri https://slack.com/api/chat.postMessage -Body @{
-    token    = $slackToken
-    channel  = "@david.niwczyk"
-    username = "Azure DSC"
-    text     = "$("SonarQube DSC running on") $($computerName)"
     }
 }
