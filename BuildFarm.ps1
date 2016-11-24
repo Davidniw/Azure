@@ -116,13 +116,6 @@ configuration BuildFarm
 
     Node SonarQube
     {
-        SlackMessage TrySlack 
-        {
-            UserName = "david.niwczyk@rockend.com.au"
-            Token    = $slackCredential.password
-            Channel  = "#builds-devops"
-            Text     = "Greetings and salutations from powershell DSC"
-        }
     
     	File SonarQube
     	{
@@ -227,5 +220,12 @@ configuration BuildFarm
             Ensure               = 'Absent'
             Name                 = 'Web-Server'
         }
+    }
+    
+    Invoke-RestMethod -Uri https://slack.com/api/chat.postMessage -Body @{
+    token    = $slackCredential.password
+    channel  = "#builds-devops"
+    username = "Azure DSC"
+    text     = "$("SonarQube DSC running on") $($computerName)"
     }
 }
