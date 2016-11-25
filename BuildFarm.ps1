@@ -1,9 +1,7 @@
 configuration BuildFarm
 { 
 
-    param(
-        [string]$computerName
-    )
+    param([System.String] $computerName)
 
     Import-DscResource -Name MSFT_xServiceResource -ModuleName xPSDesiredStateConfiguration
     Import-DscResource -ModuleName PSDesiredStateConfiguration
