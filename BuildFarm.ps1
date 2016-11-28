@@ -113,13 +113,15 @@ configuration BuildFarm
     {
     
         Script slackMessage            
-        {            
-            Invoke-RestMethod -Uri https://slack.com/api/chat.postMessage -Body @{
-            token    = $slackToken
-            channel  = "@david.niwczyk"
-            username = "Azure DSC"
-            text     = "$("SonarQube DSC running on") $($computerName)"
-            }
+        {
+            SetScript = {            
+                Invoke-RestMethod -Uri https://slack.com/api/chat.postMessage -Body @{
+                    token    = $slackToken
+                    channel  = "@david.niwczyk"
+                    username = "Azure DSC"
+                    text     = "$("SonarQube DSC running on") $($computerName)"
+                }          
+            }   
         }
         
     	File SonarQube
