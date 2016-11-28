@@ -111,31 +111,14 @@ configuration BuildFarm
 
     Node SonarQube
     {
-    
-        Script slackMessage            
+        function slackMessage()
         {
-            GetScript = {            
-                Return @{            
-                    Result = [string]$((Get-WmiObject -Class Win32_ComputerSystem -Property Name).Name)
-                }            
-            }
-            
-            TestScript = {            
-                If (((Get-WmiObject -Class Win32_ComputerSystem -Property Name).Name)) {          
-                    Return $true            
-                } Else {
-                    Return $false            
-                }            
-            }
-            
-            SetScript = {
-                Invoke-RestMethod -Uri https://slack.com/api/chat.postMessage -Body @{
-                    token    = $slackToken
-                    channel  = "@david.niwczyk"
-                    username = "Azure DSC"
-                    text     = "$("SonarQube DSC running on") $($computerName)"
-                }          
-            }   
+            Invoke-RestMethod -Uri https://slack.com/api/chat.postMessage -Body @{
+                token    = $slackToken
+                channel  = "@david.niwczyk"
+                username = "Azure DSC"
+                text     = "$("SonarQube DSC running on") $($computerName)"
+            }          
         }
         
     	File SonarQube
