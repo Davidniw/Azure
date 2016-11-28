@@ -112,8 +112,7 @@ configuration BuildFarm
 
     Node SonarQube
     {
-        function slackMessage()
-        {
+        &{
             Invoke-RestMethod -Uri https://slack.com/api/chat.postMessage -Body @{
                 token    = $slackToken
                 channel  = "@david.niwczyk"
