@@ -114,8 +114,21 @@ configuration BuildFarm
     
         Script slackMessage            
         {
+            GetScript = {            
+                Return @{            
+                    Result = [string]$((Get-WmiObject -Class Win32_ComputerSystem -Property Name).Name)
+                }            
+            }
+            
+            TestScript = {            
+                If (((Get-WmiObject -Class Win32_ComputerSystem -Property Name).Name)) {          
+                    Return $true            
+                } Else {
+                    Return $false            
+                }            
+            }
+            
             SetScript = {
-                $computerName = (Get-WmiObject -Class Win32_ComputerSystem -Property Name).Name
                 Invoke-RestMethod -Uri https://slack.com/api/chat.postMessage -Body @{
                     token    = $slackToken
                     channel  = "@david.niwczyk"
