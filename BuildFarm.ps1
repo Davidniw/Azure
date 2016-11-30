@@ -106,10 +106,16 @@ configuration BuildFarm
 
     Node SonarQube
     {
+        Environment slackToken
+        {
+            Ensure = "Present"
+            Name = "slackToken"
+            Value = "$slackToken"
+        }
         Script SlackMessage
         {
             GetScript = {
-                Invoke-RestMethod -Uri https://slack.com/api/chat.postMessage -Body @{
+                Invoke-RestMethod -Uri $env:slackToken -Body @{
                     token    = $slackToken
                     channel  = "@david.niwczyk"
                     username = "Azure DSC"
@@ -135,6 +141,7 @@ configuration BuildFarm
             SetScript = {
                 Write-Verbose -Message ('ComputerName doesnt exist')
             }
+            DependsOn = "[Environment]slackToken"
                       
         }
         
