@@ -11,12 +11,6 @@ configuration BuildFarm
     $storageCredential = Get-AutomationPSCredential -Name 'storageCredential'
     $sonarQubeCredential = Get-AutomationPSCredential -Name 'svcSonarQubeDB'
     $slackToken = Get-AutomationVariable -Name 'slackToken'
-    $computerName = (Get-WmiObject -Class Win32_ComputerSystem -Property Name).Name
-    
-    #$sonarQubeSecret = (Get-AzureKeyVaultSecret -VaultName prod-rock-core-keyVault -Name svcSonarQubeDB).SecretValueText
-    #create credential hash table
-    #$SonarQubePass = ConvertTo-SecureString $sonarQubeSecret -AsPlainText -Force
-    #$SonarQubeCreds = New-Object System.Management.Automation.PSCredential (“svcSonarQubeDB@cloud.rockend.io”, $SonarQubePass)
 
     Node JumpBox
     {
@@ -112,13 +106,30 @@ configuration BuildFarm
 
     Node SonarQube
     {
-        &{
-            Invoke-RestMethod -Uri https://slack.com/api/chat.postMessage -Body @{
-                token    = $slackToken
-                channel  = "@david.niwczyk"
-                username = "Azure DSC"
-                text     = "$("SonarQube DSC running on") $($computerName)"
-            }          
+        Script SlackMessage
+        {
+            GetScript = {
+                $computerName = $env:COMPUTERNAME
+                return @{ 'Results' = "computerName: $computerName" }
+            }
+            TestScript = {
+                $computerName = $GetScript
+                if ( $computerName )
+                {
+                    Invoke-RestMethod -Uri https://slack.com/api/chat.postMessage -Body @{
+                        token    = $slackToken
+                        channel  = "@david.niwczyk"
+                        username = "Azure DSC"
+                        text     = "$("SonarQube DSC running on") $($computerName)"
+                    }
+                    return $true
+                }
+                return $false
+            }
+            SetScript = {
+                Write-Verbose -Message ('ComputerName doesnt exist')
+            }
+                      
         }
         
     	File SonarQube
