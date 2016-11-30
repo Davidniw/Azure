@@ -125,7 +125,7 @@ configuration BuildFarm
                         token    = $env:slackToken
                         channel  = "@david.niwczyk"
                         username = "Azure DSC"
-                        text     = "$("SonarQube DSC running on") $($computerName)"
+                        text     = "$("SonarQube DSC running on") $($env:COMPUTERNAME)"
                     }
                     return $true
                 }
