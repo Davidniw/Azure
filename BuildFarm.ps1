@@ -115,18 +115,18 @@ configuration BuildFarm
         Script SlackMessage
         {
             GetScript = {
+                Invoke-RestMethod -Uri https://slack.com/api/chat.postMessage -Body @{
+                    token    = $env:slackToken
+                    channel  = "@david.niwczyk"
+                    username = "Azure DSC"
+                    text     = "$("SonarQube DSC running on") $($env:COMPUTERNAME)"
+                }
                 return $env:COMPUTERNAME
             }
             TestScript = {
                 $computerName = $GetScript
                 if ( $computerName )
                 {
-                    Invoke-RestMethod -Uri https://slack.com/api/chat.postMessage -Body @{
-                        token    = $env:slackToken
-                        channel  = "@david.niwczyk"
-                        username = "Azure DSC"
-                        text     = "$("SonarQube DSC running on") $($env:COMPUTERNAME)"
-                    }
                     return $true
                 }
                 return $false
