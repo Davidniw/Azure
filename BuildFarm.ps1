@@ -243,4 +243,14 @@ configuration BuildFarm
             Name                 = 'Web-Server'
         }
     }
+    
+    Node NotWebServer
+    {
+        WindowsFeature IIS
+        {
+            Ensure               = 'Absent'
+            Name                 = 'Web-Server'
+        }
+    }
+
 }
