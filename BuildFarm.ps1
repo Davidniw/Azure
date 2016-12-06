@@ -6,8 +6,10 @@ configuration BuildFarm
     Import-DscResource -Module cNtfsAccessControl
     Import-DscResource -Module xPSDesiredStateConfiguration
     Import-DSCResource -ModuleName SlackDSCResource
+    Import-DscResource -Module xComputerManagement
     
     #param for keyvault = svcSonarQubeDB
+    $domainCredentials = Get-AutomationPSCredential -Name 'domainCreds'
     $storageCredential = Get-AutomationPSCredential -Name 'storageCredential'
     $sonarQubeCredential = Get-AutomationPSCredential -Name 'svcSonarQubeDB'
     $slackToken = Get-AutomationVariable -Name 'slackToken'
@@ -251,6 +253,12 @@ configuration BuildFarm
             Ensure               = 'Absent'
             Name                 = 'Web-Server'
         }
+        xComputer JoinDomain 
+        { 
+            Name          = $env:COMPUTERNAME  
+            DomainName    = "cloud.rockend.io" 
+            Credential    = $domainCredentials
+        } 
     }
 
 }
