@@ -111,6 +111,8 @@ configuration BuildFarm
         xComputer NewName
         {
             Name = "dev1pvsnqape01"
+            DomainName    = "cloud.rockend.io"
+            Credential    = $domainCredentials
         }
         
         Environment slackToken
