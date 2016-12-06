@@ -121,11 +121,12 @@ configuration BuildFarm
                 return $env:COMPUTERNAME
             }
             TestScript = {
+                $ServiceStatus = (get-service SonarQube).status
                 Invoke-RestMethod -Uri https://slack.com/api/chat.postMessage -Body @{
                     token    = $env:slackToken
                     channel  = "@david.niwczyk"
                     username = "Azure DSC"
-                    text     = "$("SonarQube DSC running on") $($env:COMPUTERNAME)"
+                    text     = "$("SonarQube service is") $($ServiceStatus) ("on") $($env:COMPUTERNAME)"
                 }
                 $computerName = $GetScript
                 if ( $computerName )
@@ -253,12 +254,6 @@ configuration BuildFarm
             Ensure               = 'Absent'
             Name                 = 'Web-Server'
         }
-        xComputer JoinDomain 
-        { 
-            Name          = $env:COMPUTERNAME  
-            DomainName    = "cloud.rockend.io" 
-            Credential    = $domainCredentials
-        } 
     }
 
 }
