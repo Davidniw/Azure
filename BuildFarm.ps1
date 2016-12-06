@@ -108,6 +108,11 @@ configuration BuildFarm
 
     Node SonarQube
     {
+        xComputer NewName
+        {
+            Name = "dev1pvsnqape01"
+        }
+        
         Environment slackToken
         {
             Ensure = "Present"
