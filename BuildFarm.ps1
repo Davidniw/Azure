@@ -7,6 +7,7 @@ configuration BuildFarm
     Import-DscResource -Module xPSDesiredStateConfiguration
     Import-DSCResource -ModuleName SlackDSCResource
     Import-DscResource -Module xComputerManagement
+    Import-DscResource -module xChrome 
     
     #param for keyvault = svcSonarQubeDB
     $domainCredentials = Get-AutomationPSCredential -Name 'domainCreds'
@@ -223,7 +224,7 @@ configuration BuildFarm
             DependsOn           = '[File]SonarQube'
         }
         
-        Service SonarQubeNew
+        Service SonarQube
         {
             Name                = 'SonarQube'
             DisplayName         = 'SonarQube'
@@ -233,6 +234,13 @@ configuration BuildFarm
             Ensure              = "Present"
             Path                = 'C:\sonarqube-6.0\sonarqube-6.0\bin\windows-x86-64\wrapper.exe -s C:\sonarqube-6.0\sonarqube-6.0\conf\wrapper.conf'
             DependsOn           = '[cNtfsPermissionEntry]svcSonarQubeDbPermission'
+        }
+        
+             
+        MSFT_xChrome chrome 
+        { 
+            Language = "English" 
+            LocalPath = "C:\Program Files (x86)\Google\Chrome\Application"
         } 
         
         LocalConfigurationManager 
