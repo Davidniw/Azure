@@ -233,15 +233,6 @@ configuration BuildFarm
             Ensure              = "Present"
             Path                = 'C:\sonarqube-6.0\sonarqube-6.0\bin\windows-x86-64\wrapper.exe -s C:\sonarqube-6.0\sonarqube-6.0\conf\wrapper.conf'
             DependsOn           = '[cNtfsPermissionEntry]svcSonarQubeDbPermission'
-        }
-        Service SonarQubeStart
-        {
-            Name                = "SonarQube"
-            DisplayName         = 'SonarQube'
-            StartupType         = "Automatic"
-            State               = "Running"
-            Credential          = $sonarQubeCredential
-            DependsOn           = '[Service]SonarQubeNew'
         } 
         
         LocalConfigurationManager 
