@@ -107,14 +107,7 @@ configuration BuildFarm
     }
 
     Node SonarQube
-    {
-        xComputer NewName
-        {
-            Name = "dev1pvsnqape01"
-            DomainName    = "cloud.rockend.io"
-            Credential    = $domainCredentials
-        }
-        
+    {   
         Environment slackToken
         {
             Ensure = "Present"
@@ -230,7 +223,7 @@ configuration BuildFarm
             DependsOn           = '[File]SonarQube'
         }
         
-        Service SonarQube
+        Service SonarQubeNew
         {
             Name                = 'SonarQube'
             DisplayName         = 'SonarQube'
@@ -241,6 +234,15 @@ configuration BuildFarm
             Path                = 'C:\sonarqube-6.0\sonarqube-6.0\bin\windows-x86-64\wrapper.exe -s C:\sonarqube-6.0\sonarqube-6.0\conf\wrapper.conf'
             DependsOn           = '[cNtfsPermissionEntry]svcSonarQubeDbPermission'
         }
+        Service SonarQubeStart
+        {
+            Name                = "SonarQube"
+            DisplayName         = 'SonarQube'
+            StartupType         = "Automatic"
+            State               = "Running"
+            Credential          = $sonarQubeCredential
+            DependsOn           = '[Service]SonarQubeNew'
+        } 
         
         LocalConfigurationManager 
         { 
