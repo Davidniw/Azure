@@ -259,4 +259,3 @@ configuration BuildFarm
     }
 
 }
-BuildFarm -ComputerName $env:COMPUTERNAME
