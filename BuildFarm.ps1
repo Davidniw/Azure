@@ -2,7 +2,7 @@ configuration BuildFarm
 { 
     param
     (
-        [string]$ComputerName
+        [string]$ComputerName = $env:COMPUTERNAME
     )
 
     Import-DscResource -Name MSFT_xServiceResource -ModuleName xPSDesiredStateConfiguration
@@ -114,6 +114,13 @@ configuration BuildFarm
 
     Node SonarQube
     {   
+        xComputer JoinDomain
+        {
+            Name          = $ComputerName
+            DomainName    = "cloud.rockend.io"
+            Credential    = $domainCredentials
+        }
+    
         Environment slackToken
         {
             Ensure = "Present"
