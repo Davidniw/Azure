@@ -116,28 +116,17 @@ configuration BuildFarm
             Value = "$slackToken"
         }
         Script SlackMessage
-        {
-            GetScript = {
-                    #worked twice in here
-                return $env:COMPUTERNAME
-            }
-            TestScript = {
+        {   Credential = $domainCredentials
+            GetScript = { }
+            TestScript = { $False }
+            SetScript = {
                 $ServiceStatus = (get-service SonarQube).status
                 Invoke-RestMethod -Uri https://slack.com/api/chat.postMessage -Body @{
                     token    = $env:slackToken
                     channel  = "@david.niwczyk"
                     username = "Azure DSC"
-                    text     = "$("SonarQube service is") $($ServiceStatus) $("on") $($env:COMPUTERNAME)"
+                    text     = "$("SonarQube service is") $($ServiceStatus) $("on") $($env:COMPUTERNAME) $("as") $($env:UserName)"
                 }
-                $computerName = $GetScript
-                if ( $computerName )
-                {
-                    return $true
-                }
-                return $false
-            }
-            SetScript = {
-                Write-Verbose -Message ('ComputerName doesnt exist')
             }
             DependsOn = "[Environment]slackToken"
                       
