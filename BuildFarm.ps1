@@ -1,9 +1,5 @@
 configuration BuildFarm
 { 
-    param
-    (
-        [string]$ComputerName = $env:COMPUTERNAME
-    )
 
     Import-DscResource -Name MSFT_xServiceResource -ModuleName xPSDesiredStateConfiguration
     Import-DscResource -ModuleName PSDesiredStateConfiguration
