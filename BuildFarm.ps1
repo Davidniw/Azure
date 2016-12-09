@@ -1,5 +1,10 @@
 configuration BuildFarm
 { 
+    param
+    (
+        [string]$ComputerName
+    )
+
     Import-DscResource -Name MSFT_xServiceResource -ModuleName xPSDesiredStateConfiguration
     Import-DscResource -ModuleName PSDesiredStateConfiguration
     Import-DscResource -ModuleName AzureRM.KeyVault
@@ -254,3 +259,4 @@ configuration BuildFarm
     }
 
 }
+BuildFarm -ComputerName $env:COMPUTERNAME
