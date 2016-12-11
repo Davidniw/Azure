@@ -126,7 +126,7 @@ configuration BuildFarm
         Script SlackMessage
         {   Credential = $domainCredentials
             GetScript = { }
-            TestScript = { $False }
+            TestScript = { $false }
             SetScript = {
                 $ServiceStatus = (get-service SonarQube).status
                 Invoke-RestMethod -Uri https://slack.com/api/chat.postMessage -Body @{
