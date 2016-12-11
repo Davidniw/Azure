@@ -110,13 +110,6 @@ configuration BuildFarm
 
     Node SonarQube
     {   
-        xComputer JoinDomain
-        {
-            Name          = $ComputerName
-            DomainName    = "cloud.rockend.io"
-            Credential    = $domainCredentials
-        }
-    
         Environment slackToken
         {
             Ensure = "Present"
