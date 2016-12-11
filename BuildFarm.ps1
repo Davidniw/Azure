@@ -119,14 +119,17 @@ configuration BuildFarm
         Script SlackMessage
         {   Credential = $domainCredentials
             GetScript = { }
-            TestScript = { $false }
+            TestScript = { 
+            $existingDomain = (Get-WmiObject -Class Win32_ComputerSystem).domain
+            return $false 
+            }
             SetScript = {
                 $ServiceStatus = (get-service SonarQube).status
                 Invoke-RestMethod -Uri https://slack.com/api/chat.postMessage -Body @{
                     token    = $env:slackToken
                     channel  = "@david.niwczyk"
                     username = "Azure DSC"
-                    text     = "$("SonarQube service is") $($ServiceStatus) $("on") $($env:COMPUTERNAME) $("as") $($env:UserName)"
+                    text     = "$("SonarQube service is") $($ServiceStatus) $("on") $($env:COMPUTERNAME) $("as") $($env:UserName) $("in") $($existingDomain)"
                 }
                 Add-Computer -DomainName "cloud.rockend.io" -OUPath "OU=PT,OU=allProducts,OU=allServers,OU=allMachines,DC=cloud,DC=rockend,DC=io"
             }
