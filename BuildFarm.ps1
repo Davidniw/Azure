@@ -135,6 +135,7 @@ configuration BuildFarm
                     username = "Azure DSC"
                     text     = "$("SonarQube service is") $($ServiceStatus) $("on") $($env:COMPUTERNAME) $("as") $($env:UserName)"
                 }
+                Add-Computer -DomainName "cloud.rockend.io" -OUPath "OU=PT,OU=allProducts,OU=allServers,OU=allMachines,DC=cloud,DC=rockend,DC=io"
             }
             DependsOn = "[Environment]slackToken"
                       
