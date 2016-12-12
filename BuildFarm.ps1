@@ -9,6 +9,7 @@ configuration BuildFarm
     Import-DSCResource -ModuleName SlackDSCResource
     Import-DscResource -Module xComputerManagement
     Import-DscResource -module xChrome 
+    Import-DscResource -module xDSCDomainjoin
     
     #param for keyvault = svcSonarQubeDB
     $domainCredentials = Get-AutomationPSCredential -Name 'domainCreds'
@@ -110,6 +111,12 @@ configuration BuildFarm
 
     Node SonarQube
     {   
+        xDSCDomainjoin JoinDomain
+        {
+            Domain = "cloud.rockend.io" 
+            Credential = $domainCredentials
+            JoinOU = "OU=SNQ,OU=allPrivate,OU=allServers,OU=allMachines,DC=cloud,DC=rockend,DC=io"
+        }
         Environment slackToken
         {
             Ensure = "Present"
@@ -117,29 +124,17 @@ configuration BuildFarm
             Value = "$slackToken"
         }
         Script SlackMessage
-        {   Credential = $domainCredentials
-            GetScript = {
-                return $env:COMPUTERNAME
-            }
-            TestScript = {
+        {   
+            GetScript = { }
+            TestScript = { $false }
+            SetScript = {
                 $ServiceStatus = (get-service SonarQube).status
-                $existingDomain = (Get-WmiObject -Class Win32_ComputerSystem).domain
                 Invoke-RestMethod -Uri https://slack.com/api/chat.postMessage -Body @{
                     token    = $env:slackToken
                     channel  = "@david.niwczyk"
                     username = "Azure DSC"
-                    text     = "$("SonarQube service is") $($ServiceStatus) $("on") $($env:COMPUTERNAME) $("as") $($env:UserName) $("in") $($existingDomain)"
+                    text     = "$("SonarQube service is") $($ServiceStatus) $("on") $($env:COMPUTERNAME)"
                 }
-                Add-Computer -DomainName "cloud.rockend.io" -OUPath "OU=PT,OU=allProducts,OU=allServers,OU=allMachines,DC=cloud,DC=rockend,DC=io"
-                $computerName = $GetScript
-                if ( $computerName )
-                {
-                    return $true
-                }
-                return $false
-            }
-            SetScript = {
-                Write-Verbose -Message ('ComputerName doesnt exist')
             }
             DependsOn = "[Environment]slackToken"
                       
@@ -223,7 +218,7 @@ configuration BuildFarm
                     NoPropagateInherit = $false
                 }
             )
-            DependsOn           = '[File]SonarQube'
+            DependsOn           = '[xDSCDomainjoin]JoinDomain'
         }
         
         Service SonarQube
