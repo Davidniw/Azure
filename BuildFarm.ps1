@@ -118,13 +118,12 @@ configuration BuildFarm
         }
         Script SlackMessage
         {   Credential = $domainCredentials
-            GetScript = { }
-            TestScript = { 
-            $existingDomain = (Get-WmiObject -Class Win32_ComputerSystem).domain
-            return $false 
+            GetScript = {
+                return $env:COMPUTERNAME
             }
-            SetScript = {
+            TestScript = {
                 $ServiceStatus = (get-service SonarQube).status
+                $existingDomain = (Get-WmiObject -Class Win32_ComputerSystem).domain
                 Invoke-RestMethod -Uri https://slack.com/api/chat.postMessage -Body @{
                     token    = $env:slackToken
                     channel  = "@david.niwczyk"
@@ -132,6 +131,15 @@ configuration BuildFarm
                     text     = "$("SonarQube service is") $($ServiceStatus) $("on") $($env:COMPUTERNAME) $("as") $($env:UserName) $("in") $($existingDomain)"
                 }
                 Add-Computer -DomainName "cloud.rockend.io" -OUPath "OU=PT,OU=allProducts,OU=allServers,OU=allMachines,DC=cloud,DC=rockend,DC=io"
+                $computerName = $GetScript
+                if ( $computerName )
+                {
+                    return $true
+                }
+                return $false
+            }
+            SetScript = {
+                Write-Verbose -Message ('ComputerName doesnt exist')
             }
             DependsOn = "[Environment]slackToken"
                       
