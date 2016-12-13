@@ -399,22 +399,6 @@ configuration BuildFarm
         }
     }
     
-    Node APIServer
-    {
-        xDSCDomainjoin JoinDomain
-        {
-            Domain = $domainName
-            Credential = $domainCredentials
-            JoinOU = "OU=SM,OU=allProducts,OU=allServers,OU=allMachines,DC=cloud,DC=rockend,DC=io"
-        }
-        
-        WindowsFeature IIS
-        {
-            Ensure               = 'Absent'
-            Name                 = 'Web-Server'
-        }
-    }
-    
     Node Octopus
     {
         xDSCDomainjoin JoinDomain
