@@ -192,6 +192,12 @@ configuration BuildFarm
     		Type = "Directory"
     		Recurse = $false
         }
+	
+	 MSFT_xChrome chrome 
+        { 
+            Language = "English" 
+            LocalPath = "C:\software\Google\Chrome\ChromeSetup.msi"
+        } 
         
         #Install c:\software\Microsoft\sqljdbc\sqljdbc_4.2.6420.100_enu.exe (depends on copy jobs)
         #Install c:\software\TeamCity-10.0.2.exe (depends on previous and copy jobs)
@@ -331,12 +337,11 @@ configuration BuildFarm
             Path                = 'C:\sonarqube-6.0\sonarqube-6.0\bin\windows-x86-64\wrapper.exe -s C:\sonarqube-6.0\sonarqube-6.0\conf\wrapper.conf'
             DependsOn           = '[cNtfsPermissionEntry]svcSonarQubeDbPermission'
         }
-        
-             
+          
         MSFT_xChrome chrome 
         { 
             Language = "English" 
-            LocalPath = "C:\Program Files (x86)\Google\Chrome\Application"
+            LocalPath = "C:\software\Google\Chrome\ChromeSetup.msi"
         } 
         
         LocalConfigurationManager 
