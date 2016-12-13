@@ -93,7 +93,7 @@ configuration BuildFarm
         
         File TeamCity
         {
-            DestinationPath = "c:\software\Jetbrains\TeamCity"
+            DestinationPath = "c:\software\Jetbrains\TeamCity\TeamCity-10.0.2.exe"
     		Credential = $storageCredential
     		Ensure = "Present"
     		SourcePath = "\\prodrockcoresoftware.file.core.windows.net\software\Software\TeamCity\TeamCity-10.0.2.exe"
@@ -103,7 +103,7 @@ configuration BuildFarm
         
         File sqljdbc
         {
-            DestinationPath = "c:\software\Microsoft\sqljdbc"
+            DestinationPath = "c:\software\Microsoft\sqljdbc\sqljdbc_4.2.6420.100_enu.exe.lnk"
     		Credential = $storageCredential
     		Ensure = "Present"
     		SourcePath = "\\prodrockcoresoftware.file.core.windows.net\software\Software\TeamCity\sqljdbc_4.2.6420.100_enu.exe.lnk"
@@ -113,21 +113,21 @@ configuration BuildFarm
         
         File NodeJS
         {
-            DestinationPath = "c:\software\Joyent\NodeJS"
+            DestinationPath = "c:\software\Joyent\NodeJS\node-v6.9.1-x64.msi"
     		Credential = $storageCredential
     		Ensure = "Present"
     		SourcePath = "\\prodrockcoresoftware.file.core.windows.net\software\Utilities\NodeJS\node-v6.9.1-x64.msi"
-    		Type = "Directory"
+    		Type = "File"
     		Recurse = $false
         }
         
         File Git
         {
-            DestinationPath = "c:\software\Git\Git"
+            DestinationPath = "c:\software\Git\Git-2.11.0-64-bit.exe"
     		Credential = $storageCredential
     		Ensure = "Present"
     		SourcePath = "\\prodrockcoresoftware.file.core.windows.net\\software\Utilities\Git\Git-2.11.0-64-bit.exe"
-    		Type = "Directory"
+    		Type = "File"
     		Recurse = $false
         }
         
