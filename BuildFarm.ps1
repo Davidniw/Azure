@@ -58,6 +58,13 @@ configuration BuildFarm
 
     Node Klondike
     {
+        xDSCDomainjoin JoinDomain
+        {
+            Domain = $domainName
+            Credential = $domainCredentials
+            JoinOU = "OU=KDK,OU=allPrivate,OU=allServers,OU=allMachines,DC=cloud,DC=rockend,DC=io"
+        }
+        
         File Klondike
         {
             DestinationPath = "c:\inetpub\wwwroot"
@@ -171,7 +178,7 @@ configuration BuildFarm
             DestinationPath = "c:\software\Joyent\NodeJS"
     		Credential = $storageCredential
     		Ensure = "Present"
-    		SourcePath = "\\prodrockcoresoftware.file.core.windows.net\software\Utilities\NodeJS\node-v6.9.1-x64.msi"
+    		SourcePath = "\\prodrockcoresoftware.file.core.windows.net\software\Utilities\NodeJS"
     		Type = "Directory"
     		Recurse = $false
         }
@@ -181,7 +188,7 @@ configuration BuildFarm
             DestinationPath = "c:\software\Git\Git"
     		Credential = $storageCredential
     		Ensure = "Present"
-    		SourcePath = "\\prodrockcoresoftware.file.core.windows.net\\software\Utilities\Git\Git-2.11.0-64-bit.exe"
+    		SourcePath = "\\prodrockcoresoftware.file.core.windows.net\\software\Utilities\Git"
     		Type = "Directory"
     		Recurse = $false
         }
@@ -207,12 +214,14 @@ configuration BuildFarm
             Credential = $domainCredentials
             JoinOU = "OU=SNQ,OU=allPrivate,OU=allServers,OU=allMachines,DC=cloud,DC=rockend,DC=io"
         }
+        
         Environment slackToken
         {
             Ensure = "Present"
             Name = "slackToken"
             Value = "$slackToken"
         }
+        
         Script SlackMessage
         {   
             GetScript = { }
@@ -341,6 +350,209 @@ configuration BuildFarm
             Name                 = 'Web-Server'
         }
     }
+    
+    Node Backup
+    {
+        xDSCDomainjoin JoinDomain
+        {
+            Domain = $domainName
+            Credential = $domainCredentials
+            JoinOU = "OU=BCK,OU=allPrivate,OU=allServers,OU=allMachines,DC=cloud,DC=rockend,DC=io"
+        }
+        
+        WindowsFeature IIS
+        {
+            Ensure               = 'Absent'
+            Name                 = 'Web-Server'
+        }
+    }
+    
+    Node RabbitMQ
+    {
+        xDSCDomainjoin JoinDomain
+        {
+            Domain = $domainName
+            Credential = $domainCredentials
+            JoinOU = "OU=SM,OU=allProducts,OU=allServers,OU=allMachines,DC=cloud,DC=rockend,DC=io"
+        }
+        
+        WindowsFeature IIS
+        {
+            Ensure               = 'Absent'
+            Name                 = 'Web-Server'
+        }
+    }
+    
+    Node APIServer
+    {
+        xDSCDomainjoin JoinDomain
+        {
+            Domain = $domainName
+            Credential = $domainCredentials
+            JoinOU = "OU=SM,OU=allProducts,OU=allServers,OU=allMachines,DC=cloud,DC=rockend,DC=io"
+        }
+        
+        WindowsFeature IIS
+        {
+            Ensure               = 'Absent'
+            Name                 = 'Web-Server'
+        }
+    }
+    
+    Node APIServer
+    {
+        xDSCDomainjoin JoinDomain
+        {
+            Domain = $domainName
+            Credential = $domainCredentials
+            JoinOU = "OU=SM,OU=allProducts,OU=allServers,OU=allMachines,DC=cloud,DC=rockend,DC=io"
+        }
+        
+        WindowsFeature IIS
+        {
+            Ensure               = 'Absent'
+            Name                 = 'Web-Server'
+        }
+    }
+    
+    Node Octopus
+    {
+        xDSCDomainjoin JoinDomain
+        {
+            Domain = $domainName
+            Credential = $domainCredentials
+            JoinOU = "OU=OCT,OU=allPrivate,OU=allServers,OU=allMachines,DC=cloud,DC=rockend,DC=io"
+        }
+        
+        WindowsFeature IIS
+        {
+            Ensure               = 'Absent'
+            Name                 = 'Web-Server'
+        }
+    }
+    
+    Node sqlServer
+    {
+        xDSCDomainjoin JoinDomain
+        {
+            Domain = $domainName
+            Credential = $domainCredentials
+            JoinOU = "OU=SQL,OU=allPrivate,OU=allServers,OU=allMachines,DC=cloud,DC=rockend,DC=io"
+        }
+        
+        WindowsFeature IIS
+        {
+            Ensure               = 'Absent'
+            Name                 = 'Web-Server'
+        }
+    }
+    
+    Node PrimaryDomainController
+    {
+
+		WindowsFeature DNS_RSAT
+		{ 
+			Ensure = "Present" 
+			Name = "RSAT-DNS-Server"
+		}
+
+		WindowsFeature ADDS_Install 
+		{ 
+			Ensure = 'Present' 
+			Name = 'AD-Domain-Services' 
+		} 
+
+		WindowsFeature RSAT_AD_AdminCenter 
+		{
+			Ensure = 'Present'
+			Name   = 'RSAT-AD-AdminCenter'
+		}
+
+		WindowsFeature RSAT_ADDS 
+		{
+			Ensure = 'Present'
+			Name   = 'RSAT-ADDS'
+		}
+
+		WindowsFeature RSAT_AD_PowerShell 
+		{
+			Ensure = 'Present'
+			Name   = 'RSAT-AD-PowerShell'
+		}
+
+		WindowsFeature RSAT_AD_Tools 
+		{
+			Ensure = 'Present'
+			Name   = 'RSAT-AD-Tools'
+		}
+
+		WindowsFeature RSAT_Role_Tools 
+		{
+			Ensure = 'Present'
+			Name   = 'RSAT-Role-Tools'
+		}      
+
+		WindowsFeature RSAT_GPMC 
+		{
+			Ensure = 'Present'
+			Name   = 'GPMC'
+		} 
+		
+    }
+
+	Node BackupDomainController
+    {
+
+		WindowsFeature DNS_RSAT
+		{ 
+			Ensure = "Present" 
+			Name = "RSAT-DNS-Server"
+		}
+
+		WindowsFeature ADDS_Install 
+		{ 
+			Ensure = 'Present' 
+			Name = 'AD-Domain-Services' 
+		} 
+
+		WindowsFeature RSAT_AD_AdminCenter 
+		{
+			Ensure = 'Present'
+			Name   = 'RSAT-AD-AdminCenter'
+		}
+
+		WindowsFeature RSAT_ADDS 
+		{
+			Ensure = 'Present'
+			Name   = 'RSAT-ADDS'
+		}
+
+		WindowsFeature RSAT_AD_PowerShell 
+		{
+			Ensure = 'Present'
+			Name   = 'RSAT-AD-PowerShell'
+		}
+
+		WindowsFeature RSAT_AD_Tools 
+		{
+			Ensure = 'Present'
+			Name   = 'RSAT-AD-Tools'
+		}
+
+		WindowsFeature RSAT_Role_Tools 
+		{
+			Ensure = 'Present'
+			Name   = 'RSAT-Role-Tools'
+		}      
+
+		WindowsFeature RSAT_GPMC 
+		{
+			Ensure = 'Present'
+			Name   = 'GPMC'
+		} 
+		
+    }
+
     
     Node NotWebServer
     {
