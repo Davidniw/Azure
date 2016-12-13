@@ -68,11 +68,11 @@ configuration BuildFarm
         File Klondike
         {
             DestinationPath = "c:\inetpub\wwwroot"
-    		Credential = $storageCredential
-    		Ensure = "Present"
-    		SourcePath = "\\prodrockcoresoftware.file.core.windows.net\software\Software\klondike\RElease\Klondike-Release-master"
-    		Type = "Directory"
-    		Recurse = $true
+    	    Credential = $storageCredential
+    	    Ensure = "Present"
+    	    SourcePath = "\\prodrockcoresoftware.file.core.windows.net\software\Software\klondike\RElease\Klondike-Release-master"
+    	    Type = "Directory"
+    	    Recurse = $true
         }
         
         WindowsFeature IIS
@@ -94,41 +94,50 @@ configuration BuildFarm
         File TeamCity
         {
             DestinationPath = "c:\software\Jetbrains\TeamCity\TeamCity-10.0.2.exe"
-    		Credential = $storageCredential
-    		Ensure = "Present"
-    		SourcePath = "\\prodrockcoresoftware.file.core.windows.net\software\Software\TeamCity\TeamCity-10.0.2.exe"
-    		Type = "File"
-    		Recurse = $false
+    	    Credential = $storageCredential
+    	    Ensure = "Present"
+    	    SourcePath = "\\prodrockcoresoftware.file.core.windows.net\software\Software\TeamCity\TeamCity-10.0.2.exe"
+    	    Type = "File"
+    	    Recurse = $false
         }
         
         File sqljdbc
         {
             DestinationPath = "c:\software\Microsoft\sqljdbc\sqljdbc_4.2.6420.100_enu.exe.lnk"
-    		Credential = $storageCredential
-    		Ensure = "Present"
-    		SourcePath = "\\prodrockcoresoftware.file.core.windows.net\software\Software\TeamCity\sqljdbc_4.2.6420.100_enu.exe.lnk"
-    		Type = "File"
-    		Recurse = $false
+    	    Credential = $storageCredential
+    	    Ensure = "Present"
+    	    SourcePath = "\\prodrockcoresoftware.file.core.windows.net\software\Software\TeamCity\sqljdbc_4.2.6420.100_enu.exe.lnk"
+    	    Type = "File"
+    	    Recurse = $false
         }
         
         File NodeJS
         {
-            DestinationPath = "c:\software\Joyent\NodeJS\node-v6.9.1-x64.msi"
-    		Credential = $storageCredential
-    		Ensure = "Present"
-    		SourcePath = "\\prodrockcoresoftware.file.core.windows.net\software\Utilities\NodeJS\node-v6.9.1-x64.msi"
-    		Type = "File"
-    		Recurse = $false
+	    DestinationPath = "c:\software\Joyent\NodeJS\node-v6.9.1-x64.msi"
+	    Credential = $storageCredential
+       	    Ensure = "Present"
+	    SourcePath = "\\prodrockcoresoftware.file.core.windows.net\software\Utilities\NodeJS\node-v6.9.1-x64.msi"
+	    Type = "File"
+	    Recurse = $false
         }
         
         File Git
         {
             DestinationPath = "c:\software\Git\Git-2.11.0-64-bit.exe"
-    		Credential = $storageCredential
-    		Ensure = "Present"
-    		SourcePath = "\\prodrockcoresoftware.file.core.windows.net\\software\Utilities\Git\Git-2.11.0-64-bit.exe"
-    		Type = "File"
-    		Recurse = $false
+	    Credential = $storageCredential
+	    Ensure = "Present"
+	    SourcePath = "\\prodrockcoresoftware.file.core.windows.net\\software\Utilities\Git\Git-2.11.0-64-bit.exe"
+	    Type = "File"
+	    Recurse = $false
+        }
+	
+	Package NodeJS
+        {
+            Ensure              = "Present"
+            Path                = "$Env:SystemDrive\software\Joyent\NodeJS\node-v6.9.1-x64.msi"
+            Name                = "Node.js"
+            ProductId           = "672B5547-D20B-4D19-9BFD-B93C32BC77DA"
+            DependsOn           = "[File]NodeJS"
         }
         
         #Install c:\software\Microsoft\sqljdbc\sqljdbc_4.2.6420.100_enu.exe (depends on copy jobs)
@@ -136,6 +145,12 @@ configuration BuildFarm
         
         #Copy "S:\Software\TeamCity\Config\*.*" to F:\TeamCityData\config (depends on all previous)
         #Copy S:\Software\TeamCity\Plugins\*.* to F:\TeamCityData\plugins
+	
+	MSFT_xChrome chrome 
+        { 
+            Language = "English" 
+            LocalPath = "C:\software\Google\Chrome\ChromeSetup.msi"
+        } 
         
         WindowsFeature IIS
         {
@@ -153,44 +168,60 @@ configuration BuildFarm
             JoinOU = "OU=TCA,OU=allPrivate,OU=allServers,OU=allMachines,DC=cloud,DC=rockend,DC=io"
         }
         
+                xDSCDomainjoin JoinDomain
+        {
+            Domain = $domainName
+            Credential = $domainCredentials
+            JoinOU = "OU=TCS,OU=allPrivate,OU=allServers,OU=allMachines,DC=cloud,DC=rockend,DC=io"
+        }
+        
         File TeamCity
         {
-            DestinationPath = "c:\software\Jetbrains\TeamCity"
-    		Credential = $storageCredential
-    		Ensure = "Present"
-    		SourcePath = "\\prodrockcoresoftware.file.core.windows.net\software\Software\TeamCity\TeamCity-10.0.2.exe"
-    		Type = "File"
-    		Recurse = $false
+            DestinationPath = "c:\software\Jetbrains\TeamCity\TeamCity-10.0.2.exe"
+    	    Credential = $storageCredential
+    	    Ensure = "Present"
+    	    SourcePath = "\\prodrockcoresoftware.file.core.windows.net\software\Software\TeamCity\TeamCity-10.0.2.exe"
+    	    Type = "File"
+    	    Recurse = $false
         }
         
         File sqljdbc
         {
-            DestinationPath = "c:\software\Microsoft\sqljdbc"
-    		Credential = $storageCredential
-    		Ensure = "Present"
-    		SourcePath = "\\prodrockcoresoftware.file.core.windows.net\software\Software\TeamCity\sqljdbc_4.2.6420.100_enu.exe.lnk"
-    		Type = "File"
-    		Recurse = $false
+            DestinationPath = "c:\software\Microsoft\sqljdbc\sqljdbc_4.2.6420.100_enu.exe.lnk"
+    	    Credential = $storageCredential
+    	    Ensure = "Present"
+    	    SourcePath = "\\prodrockcoresoftware.file.core.windows.net\software\Software\TeamCity\sqljdbc_4.2.6420.100_enu.exe.lnk"
+    	    Type = "File"
+    	    Recurse = $false
         }
         
         File NodeJS
         {
-            DestinationPath = "c:\software\Joyent\NodeJS"
-    		Credential = $storageCredential
-    		Ensure = "Present"
-    		SourcePath = "\\prodrockcoresoftware.file.core.windows.net\software\Utilities\NodeJS"
-    		Type = "Directory"
-    		Recurse = $false
+	    DestinationPath = "c:\software\Joyent\NodeJS\node-v6.9.1-x64.msi"
+	    Credential = $storageCredential
+       	    Ensure = "Present"
+	    SourcePath = "\\prodrockcoresoftware.file.core.windows.net\software\Utilities\NodeJS\node-v6.9.1-x64.msi"
+	    Type = "File"
+	    Recurse = $false
         }
         
         File Git
         {
-            DestinationPath = "c:\software\Git\Git"
-    		Credential = $storageCredential
-    		Ensure = "Present"
-    		SourcePath = "\\prodrockcoresoftware.file.core.windows.net\\software\Utilities\Git"
-    		Type = "Directory"
-    		Recurse = $false
+            DestinationPath = "c:\software\Git\Git-2.11.0-64-bit.exe"
+	    Credential = $storageCredential
+	    Ensure = "Present"
+	    SourcePath = "\\prodrockcoresoftware.file.core.windows.net\\software\Utilities\Git\Git-2.11.0-64-bit.exe"
+	    Type = "File"
+	    Recurse = $false
+        }
+	
+	Package NodeJS
+        {
+            Ensure              = "Present"
+            Path                = "$Env:SystemDrive\software\Joyent\NodeJS\node-v6.9.1-x64.msi"
+            Name                = "Node.js"
+            ProductId           = "672B5547-D20B-4D19-9BFD-B93C32BC77DA"
+            DependsOn           = "[File]NodeJS"
         }
 	
 	 MSFT_xChrome chrome 
