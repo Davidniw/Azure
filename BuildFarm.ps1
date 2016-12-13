@@ -16,6 +16,7 @@ configuration BuildFarm
     $storageCredential = Get-AutomationPSCredential -Name 'storageCredential'
     $sonarQubeCredential = Get-AutomationPSCredential -Name 'svcSonarQubeDB'
     $slackToken = Get-AutomationVariable -Name 'slackToken'
+    $domainName = Get-AutomationVariable -Name 'domainName'
 
     Node JumpBox
     {
@@ -74,8 +75,15 @@ configuration BuildFarm
         }
     }
 
-    Node TeamCity
+    Node TeamCityServer
     {
+        xDSCDomainjoin JoinDomain
+        {
+            Domain = $domainName
+            Credential = $domainCredentials
+            JoinOU = "OU=TCS,OU=allPrivate,OU=allServers,OU=allMachines,DC=cloud,DC=rockend,DC=io"
+        }
+        
         File TeamCity
         {
             DestinationPath = "c:\software\Jetbrains\TeamCity"
@@ -96,6 +104,26 @@ configuration BuildFarm
     		Recurse = $false
         }
         
+        File NodeJS
+        {
+            DestinationPath = "c:\software\Joyent\NodeJS"
+    		Credential = $storageCredential
+    		Ensure = "Present"
+    		SourcePath = "\\prodrockcoresoftware.file.core.windows.net\software\Utilities\NodeJS\node-v6.9.1-x64.msi"
+    		Type = "Directory"
+    		Recurse = $false
+        }
+        
+        File Git
+        {
+            DestinationPath = "c:\software\Git\Git"
+    		Credential = $storageCredential
+    		Ensure = "Present"
+    		SourcePath = "\\prodrockcoresoftware.file.core.windows.net\\software\Utilities\Git\Git-2.11.0-64-bit.exe"
+    		Type = "Directory"
+    		Recurse = $false
+        }
+        
         #Install c:\software\Microsoft\sqljdbc\sqljdbc_4.2.6420.100_enu.exe (depends on copy jobs)
         #Install c:\software\TeamCity-10.0.2.exe (depends on previous and copy jobs)
         
@@ -108,12 +136,74 @@ configuration BuildFarm
             Name                 = 'Web-Server'
         }
     }
+    
+    Node TeamCityAgent
+    {
+        xDSCDomainjoin JoinDomain
+        {
+            Domain = $domainName
+            Credential = $domainCredentials
+            JoinOU = "OU=TCA,OU=allPrivate,OU=allServers,OU=allMachines,DC=cloud,DC=rockend,DC=io"
+        }
+        
+        File TeamCity
+        {
+            DestinationPath = "c:\software\Jetbrains\TeamCity"
+    		Credential = $storageCredential
+    		Ensure = "Present"
+    		SourcePath = "\\prodrockcoresoftware.file.core.windows.net\software\Software\TeamCity\TeamCity-10.0.2.exe"
+    		Type = "File"
+    		Recurse = $false
+        }
+        
+        File sqljdbc
+        {
+            DestinationPath = "c:\software\Microsoft\sqljdbc"
+    		Credential = $storageCredential
+    		Ensure = "Present"
+    		SourcePath = "\\prodrockcoresoftware.file.core.windows.net\software\Software\TeamCity\sqljdbc_4.2.6420.100_enu.exe.lnk"
+    		Type = "File"
+    		Recurse = $false
+        }
+        
+        File NodeJS
+        {
+            DestinationPath = "c:\software\Joyent\NodeJS"
+    		Credential = $storageCredential
+    		Ensure = "Present"
+    		SourcePath = "\\prodrockcoresoftware.file.core.windows.net\software\Utilities\NodeJS\node-v6.9.1-x64.msi"
+    		Type = "Directory"
+    		Recurse = $false
+        }
+        
+        File Git
+        {
+            DestinationPath = "c:\software\Git\Git"
+    		Credential = $storageCredential
+    		Ensure = "Present"
+    		SourcePath = "\\prodrockcoresoftware.file.core.windows.net\\software\Utilities\Git\Git-2.11.0-64-bit.exe"
+    		Type = "Directory"
+    		Recurse = $false
+        }
+        
+        #Install c:\software\Microsoft\sqljdbc\sqljdbc_4.2.6420.100_enu.exe (depends on copy jobs)
+        #Install c:\software\TeamCity-10.0.2.exe (depends on previous and copy jobs)
+        
+        #Copy "S:\Software\TeamCity\Config\*.*" to F:\TeamCityData\config (depends on all previous)
+        #Copy S:\Software\TeamCity\Plugins\*.* to F:\TeamCityData\plugins
+
+        WindowsFeature IIS
+        {
+            Ensure               = 'Absent'
+            Name                 = 'Web-Server'
+        }
+    }
 
     Node SonarQube
     {   
         xDSCDomainjoin JoinDomain
         {
-            Domain = "cloud.rockend.io" 
+            Domain = $domainName
             Credential = $domainCredentials
             JoinOU = "OU=SNQ,OU=allPrivate,OU=allServers,OU=allMachines,DC=cloud,DC=rockend,DC=io"
         }
