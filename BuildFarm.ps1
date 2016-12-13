@@ -168,13 +168,6 @@ configuration BuildFarm
             JoinOU = "OU=TCA,OU=allPrivate,OU=allServers,OU=allMachines,DC=cloud,DC=rockend,DC=io"
         }
         
-                xDSCDomainjoin JoinDomain
-        {
-            Domain = $domainName
-            Credential = $domainCredentials
-            JoinOU = "OU=TCS,OU=allPrivate,OU=allServers,OU=allMachines,DC=cloud,DC=rockend,DC=io"
-        }
-        
         File TeamCity
         {
             DestinationPath = "c:\software\Jetbrains\TeamCity\TeamCity-10.0.2.exe"
