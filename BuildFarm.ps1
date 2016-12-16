@@ -180,16 +180,6 @@ configuration BuildFarm
     	    Type = "File"
     	    Recurse = $false
         }
-        
-        File NodeJS
-        {
-	    DestinationPath = "c:\software\Joyent\NodeJS\node-v6.9.1-x64.msi"
-	    Credential = $storageCredential
-       	    Ensure = "Present"
-	    SourcePath = "\\prodrockcoresoftware.file.core.windows.net\software\Utilities\NodeJS\node-v6.9.1-x64.msi"
-	    Type = "File"
-	    Recurse = $false
-        }
 	
 	cChocoInstaller installChoco
         {
@@ -266,7 +256,7 @@ configuration BuildFarm
 	     Type = "File"
 	     Recurse = $false
           }
-          <#DEPENDS ON SQL EXPRESS INSALL
+          <#DEPENDS ON SQL EXPRESS INSTALL
     	  Package AzureStorageEmulator
           {
 	     Ensure              = "Present"
