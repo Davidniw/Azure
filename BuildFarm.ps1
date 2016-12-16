@@ -10,6 +10,7 @@ configuration BuildFarm
     Import-DscResource -Module xComputerManagement
     Import-DscResource -module xChrome 
     Import-DscResource -module xDSCDomainjoin
+    Import-DscResource -ModuleName cChoco
     
     #param for keyvault = svcSonarQubeDB
     $domainCredentials = Get-AutomationPSCredential -Name 'domainCreds'
@@ -64,6 +65,19 @@ configuration BuildFarm
             Credential = $domainCredentials
             JoinOU = "OU=KDK,OU=allPrivate,OU=allServers,OU=allMachines,DC=cloud,DC=rockend,DC=io"
         }
+	
+	cChocoInstaller installChoco
+        {
+       	    InstallDir = "c:\software\choco"
+        }
+
+      	cChocoPackageInstaller installChrome
+        {
+	     Name        = "googlechrome"
+	     DependsOn   = "[cChocoInstaller]installChoco"
+	     #This will automatically try to upgrade if available, only if a version is not explicitly specified. 
+	     AutoUpgrade = $True
+        }
         
         File Klondike
         {
@@ -111,46 +125,123 @@ configuration BuildFarm
     	    Recurse = $false
         }
         
-        File NodeJS
+        cChocoInstaller installChoco
         {
-	    DestinationPath = "c:\software\Joyent\NodeJS\node-v6.9.1-x64.msi"
-	    Credential = $storageCredential
-       	    Ensure = "Present"
-	    SourcePath = "\\prodrockcoresoftware.file.core.windows.net\software\Utilities\NodeJS\node-v6.9.1-x64.msi"
-	    Type = "File"
-	    Recurse = $false
+       	    InstallDir = "c:\software\choco"
         }
-        
-        File Git
-        {
-            DestinationPath = "c:\software\Git\Git-2.11.0-64-bit.exe"
-	    Credential = $storageCredential
-	    Ensure = "Present"
-	    SourcePath = "\\prodrockcoresoftware.file.core.windows.net\\software\Utilities\Git\Git-2.11.0-64-bit.exe"
-	    Type = "File"
-	    Recurse = $false
-        }
-	
-	Package NodeJS
-        {
-            Ensure              = "Present"
-            Path                = "$Env:SystemDrive\software\Joyent\NodeJS\node-v6.9.1-x64.msi"
-            Name                = "Node.js"
-            ProductId           = "672B5547-D20B-4D19-9BFD-B93C32BC77DA"
-            DependsOn           = "[File]NodeJS"
-        }
+
+      	cChocoPackageInstaller installChrome
+      {
+	Name        = "googlechrome"
+	DependsOn   = "[cChocoInstaller]installChoco"
+	#This will automatically try to upgrade if available, only if a version is not explicitly specified. 
+	AutoUpgrade = $True
+      }
+
+      cChocoPackageInstaller installGit
+      {
+	 Ensure = 'Present'
+	 Name = "git"
+	 #Params = ""
+	 DependsOn = "[cChocoInstaller]installChoco"
+      }
+
+      cChocoPackageInstaller installMSBuildTools
+      {
+	 Ensure = 'Present'
+	 Name = "microsoft-build-tools"
+	 Version = "12.0.21005.20140416"
+	 #Params = ""
+	 DependsOn = "[cChocoInstaller]installChoco"
+      }
+
+      cChocoPackageInstaller NodeJS
+      {
+	 Ensure = 'Present'
+	 Name = "nodejs.install"
+	 #Params = ""
+	 DependsOn = "[cChocoInstaller]installChoco"
+      }
+
+      cChocoPackageInstaller Redis
+      {
+	 Ensure = 'Present'
+	 Name = "redis-64"
+	 #Params = ""
+	 DependsOn = "[cChocoInstaller]installChoco"
+      }
+
+      File AzureStorageEmulator
+      {
+	 DestinationPath = "c:\software\Microsoft\Azure Storage Emulator\MicrosoftAzureStorageEmulator.msi"
+	     Credential = $storageCredential
+	     Ensure = "Present"
+	 SourcePath = "\\prodrockcoresoftware.file.core.windows.net\software\Software\Microsoft\Azure Storage Emulator\MicrosoftAzureStorageEmulator.msi"
+	 Type = "File"
+	 Recurse = $false
+      }
+
+      File AzureBuildTools
+      {
+	 DestinationPath = "c:\software\Microsoft\Azure Build Tools"
+	     Credential = $storageCredential
+	     Ensure = "Present"
+	 SourcePath = "\\prodrockcoresoftware.file.core.windows.net\software\Software\Microsoft\Azure Build Tools"
+	 Type = "Directory"
+	 Recurse = $true
+      }
+
+      File SQLEXPR
+      {
+	 DestinationPath = "c:\software\Microsoft\SQL\SQLEXPR_x64_ENU.exe"
+	     Credential = $storageCredential
+	     Ensure = "Present"
+	 SourcePath = "\\prodrockcoresoftware.file.core.windows.net\software\Software\Microsoft\SQL\SQLEXPR_x64_ENU.exe"
+	 Type = "File"
+	 Recurse = $false
+      }
+      <#DEPENDS ON SQL EXPRESS INSALL
+	  Package AzureStorageEmulator
+      {
+	 Ensure              = "Present"
+	 Path                = "$Env:SystemDrive\software\Microsoft\Azure Storage Emulator\MicrosoftAzureStorageEmulator.msi"
+	 Name                = "Microsoft Azure Storage Emulator - v4.5"
+	 ProductId           = "54277EE5-C729-4002-B3E2-0E78B3EF3F3E"
+	 DependsOn           = "[File]AzureStorageEmulator"
+      }
+      #>
+      Package AzureLibsForNet
+      {
+	 Ensure              = "Present"
+	 Path                = "$Env:SystemDrive\software\Microsoft\Azure Build Tools\WindowsAzureLibsForNet-x64.msi"
+	 Name                = "Windows Azure Libraries for .NET – v2.3"
+	 ProductId           = "C0591F2A-45AD-4189-86A7-C2B1DF3D148D"
+	 DependsOn           = "[File]AzureBuildTools"
+	      }
+
+	      Package AzureAuthoringTools
+	      {
+		 Ensure              = "Present"
+		 Path                = "$Env:SystemDrive\software\Microsoft\Azure Build Tools\WindowsAzureAuthoringTools-x64.msi"
+		 Name                = "Windows Azure Authoring Tools - v2.3"
+		 ProductId           = "CA53F7A1-A71D-4C7F-ABD2-7BDD26FE0D74"
+		 DependsOn           = "[File]AzureBuildTools"
+	      }
+
+	      Package WindowsAzureTools
+	      {
+		 Ensure              = "Present"
+		 Path                = "$Env:SystemDrive\software\Microsoft\Azure Build Tools\WindowsAzureTools.vs120.exe"
+		 Name                = "Windows Azure Tools for Microsoft Visual Studio 2013 - v2.3"
+		 ProductId           = "E055B52B-39C5-4AA9-BD7C-05CC5D1774B7"
+		 DependsOn           = "[File]AzureBuildTools"
+	      }
         
         #Install c:\software\Microsoft\sqljdbc\sqljdbc_4.2.6420.100_enu.exe (depends on copy jobs)
         #Install c:\software\TeamCity-10.0.2.exe (depends on previous and copy jobs)
         
         #Copy "S:\Software\TeamCity\Config\*.*" to F:\TeamCityData\config (depends on all previous)
         #Copy S:\Software\TeamCity\Plugins\*.* to F:\TeamCityData\plugins
-	
-	MSFT_xChrome chrome 
-        { 
-            Language = "English" 
-            LocalPath = "C:\software\Google\Chrome\ChromeSetup.msi"
-        } 
         
         WindowsFeature IIS
         {
@@ -243,6 +334,19 @@ configuration BuildFarm
             Domain = $domainName
             Credential = $domainCredentials
             JoinOU = "OU=SNQ,OU=allPrivate,OU=allServers,OU=allMachines,DC=cloud,DC=rockend,DC=io"
+        }
+	
+	cChocoInstaller installChoco
+        {
+       	    InstallDir = "c:\software\choco"
+        }
+
+      	cChocoPackageInstaller installChrome
+        {
+	     Name        = "googlechrome"
+	     DependsOn   = "[cChocoInstaller]installChoco"
+	     #This will automatically try to upgrade if available, only if a version is not explicitly specified. 
+	     AutoUpgrade = $True
         }
         
         Environment slackToken
@@ -361,12 +465,6 @@ configuration BuildFarm
             Path                = 'C:\sonarqube-6.0\sonarqube-6.0\bin\windows-x86-64\wrapper.exe -s C:\sonarqube-6.0\sonarqube-6.0\conf\wrapper.conf'
             DependsOn           = '[cNtfsPermissionEntry]svcSonarQubeDbPermission'
         }
-          
-        MSFT_xChrome chrome 
-        { 
-            Language = "English" 
-            LocalPath = "C:\software\Google\Chrome\ChromeSetup.msi"
-        } 
         
         LocalConfigurationManager 
         { 
@@ -404,6 +502,19 @@ configuration BuildFarm
             Credential = $domainCredentials
             JoinOU = "OU=SM,OU=allProducts,OU=allServers,OU=allMachines,DC=cloud,DC=rockend,DC=io"
         }
+	
+	cChocoInstaller installChoco
+        {
+       	    InstallDir = "c:\software\choco"
+        }
+
+      	cChocoPackageInstaller installChrome
+        {
+	     Name        = "googlechrome"
+	     DependsOn   = "[cChocoInstaller]installChoco"
+	     #This will automatically try to upgrade if available, only if a version is not explicitly specified. 
+	     AutoUpgrade = $True
+        }
         
         WindowsFeature IIS
         {
@@ -419,6 +530,19 @@ configuration BuildFarm
             Domain = $domainName
             Credential = $domainCredentials
             JoinOU = "OU=SM,OU=allProducts,OU=allServers,OU=allMachines,DC=cloud,DC=rockend,DC=io"
+        }
+	
+	cChocoInstaller installChoco
+        {
+       	    InstallDir = "c:\software\choco"
+        }
+
+      	cChocoPackageInstaller installChrome
+        {
+	     Name        = "googlechrome"
+	     DependsOn   = "[cChocoInstaller]installChoco"
+	     #This will automatically try to upgrade if available, only if a version is not explicitly specified. 
+	     AutoUpgrade = $True
         }
         
         WindowsFeature IIS
@@ -436,6 +560,19 @@ configuration BuildFarm
             Credential = $domainCredentials
             JoinOU = "OU=OCT,OU=allPrivate,OU=allServers,OU=allMachines,DC=cloud,DC=rockend,DC=io"
         }
+	
+	cChocoInstaller installChoco
+        {
+       	    InstallDir = "c:\software\choco"
+        }
+
+      	cChocoPackageInstaller installChrome
+        {
+	     Name        = "googlechrome"
+	     DependsOn   = "[cChocoInstaller]installChoco"
+	     #This will automatically try to upgrade if available, only if a version is not explicitly specified. 
+	     AutoUpgrade = $True
+        }
         
         WindowsFeature IIS
         {
@@ -451,6 +588,19 @@ configuration BuildFarm
             Domain = $domainName
             Credential = $domainCredentials
             JoinOU = "OU=SQL,OU=allPrivate,OU=allServers,OU=allMachines,DC=cloud,DC=rockend,DC=io"
+        }
+	
+	cChocoInstaller installChoco
+        {
+       	    InstallDir = "c:\software\choco"
+        }
+
+      	cChocoPackageInstaller installChrome
+        {
+	     Name        = "googlechrome"
+	     DependsOn   = "[cChocoInstaller]installChoco"
+	     #This will automatically try to upgrade if available, only if a version is not explicitly specified. 
+	     AutoUpgrade = $True
         }
         
         WindowsFeature IIS
