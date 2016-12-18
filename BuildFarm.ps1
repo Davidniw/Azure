@@ -199,7 +199,6 @@ configuration BuildFarm
 	    Ensure = 'Present'
 	     Name = "git"
 	     #Params = ""
-	     DependsOn = "[cChocoInstaller]installChoco"
          }
 
          cChocoPackageInstaller installMSBuildTools
@@ -208,7 +207,6 @@ configuration BuildFarm
 	     Name = "microsoft-build-tools"
 	     Version = "12.0.21005.20140416"
 	     #Params = ""
-	     DependsOn = "[cChocoInstaller]installChoco"
           }
 
           cChocoPackageInstaller NodeJS
@@ -216,7 +214,6 @@ configuration BuildFarm
 	     Ensure = 'Present'
 	     Name = "nodejs.install"
 	     #Params = ""
-	     DependsOn = "[cChocoInstaller]installChoco"
           }
 
           cChocoPackageInstaller Redis
@@ -224,7 +221,6 @@ configuration BuildFarm
 	     Ensure = 'Present'
 	     Name = "redis-64"
 	     #Params = ""
-	     DependsOn = "[cChocoInstaller]installChoco"
           }
 
           File AzureStorageEmulator
@@ -272,7 +268,6 @@ configuration BuildFarm
 	     Path                = "$Env:SystemDrive\software\Microsoft\Azure Build Tools\WindowsAzureLibsForNet-x64.msi"
 	     Name                = "Windows Azure Libraries for .NET – v2.3"
 	     ProductId           = "C0591F2A-45AD-4189-86A7-C2B1DF3D148D"
-	     DependsOn           = "[File]AzureBuildTools"
   	  }
 
           Package AzureAuthoringTools
@@ -281,7 +276,6 @@ configuration BuildFarm
 	     Path                = "$Env:SystemDrive\software\Microsoft\Azure Build Tools\WindowsAzureAuthoringTools-x64.msi"
 	     Name                = "Windows Azure Authoring Tools - v2.3"
    	     ProductId           = "CA53F7A1-A71D-4C7F-ABD2-7BDD26FE0D74"
-	     DependsOn           = "[File]AzureBuildTools"
 	  }
 
 	  Package WindowsAzureTools
@@ -290,7 +284,6 @@ configuration BuildFarm
 	     Path                = "$Env:SystemDrive\software\Microsoft\Azure Build Tools\WindowsAzureTools.vs120.exe"
 	     Name                = "Windows Azure Tools for Microsoft Visual Studio 2013 - v2.3"
 	     ProductId           = "E055B52B-39C5-4AA9-BD7C-05CC5D1774B7"
-	     DependsOn           = "[File]AzureBuildTools"
 	  }
         
         
