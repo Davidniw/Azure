@@ -277,7 +277,7 @@ configuration BuildFarm
 	     Name                = "Windows Azure Authoring Tools - v2.3"
    	     ProductId           = "CA53F7A1-A71D-4C7F-ABD2-7BDD26FE0D74"
 	  }
-	#>
+	
 	  Package WindowsAzureTools
 	  {
 	     Ensure              = "Present"
@@ -285,7 +285,7 @@ configuration BuildFarm
 	     Name                = "Windows Azure Tools for Microsoft Visual Studio 2013 - v2.3"
 	     ProductId           = "E055B52B-39C5-4AA9-BD7C-05CC5D1774B7"
 	  }
-        
+        #>
         
         #Install c:\software\Microsoft\sqljdbc\sqljdbc_4.2.6420.100_enu.exe (depends on copy jobs)
         #Install c:\software\TeamCity-10.0.2.exe (depends on previous and copy jobs)
