@@ -261,7 +261,7 @@ configuration BuildFarm
 	     ProductId           = "54277EE5-C729-4002-B3E2-0E78B3EF3F3E"
 	     DependsOn           = "[File]AzureStorageEmulator"
           }
-          #>
+          
           Package AzureLibsForNet
           {
 	     Ensure              = "Present"
@@ -269,7 +269,7 @@ configuration BuildFarm
 	     Name                = "Windows Azure Libraries for .NET – v2.3"
 	     ProductId           = "C0591F2A-45AD-4189-86A7-C2B1DF3D148D"
   	  }
-	<#
+	
           Package AzureAuthoringTools
 	  {
 	     Ensure              = "Present"
