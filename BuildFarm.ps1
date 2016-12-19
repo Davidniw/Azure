@@ -265,7 +265,7 @@ configuration BuildFarm
           Package AzureLibsForNet
           {
 	     Ensure              = "Present"
-	     Path                = "$Env:SystemDrive\software\Microsoft\Azure Build Tools\WindowsAzureLibsForNet-x64.msi"
+	     Path                = "c:\software\Microsoft\Azure Build Tools\WindowsAzureLibsForNet-x64.msi"
 	     Name                = "Windows Azure Libraries for .NET – v2.3"
 	     ProductId           = "C0591F2A-45AD-4189-86A7-C2B1DF3D148D"
   	  }
@@ -273,7 +273,7 @@ configuration BuildFarm
           Package AzureAuthoringTools
 	  {
 	     Ensure              = "Present"
-	     Path                = "$Env:SystemDrive\software\Microsoft\Azure Build Tools\WindowsAzureAuthoringTools-x64.msi"
+	     Path                = "c:\software\Microsoft\Azure Build Tools\WindowsAzureAuthoringTools-x64.msi"
 	     Name                = "Windows Azure Authoring Tools - v2.3"
    	     ProductId           = "CA53F7A1-A71D-4C7F-ABD2-7BDD26FE0D74"
 	  }
@@ -281,7 +281,7 @@ configuration BuildFarm
 	  Package WindowsAzureTools
 	  {
 	     Ensure              = "Present"
-	     Path                = "$Env:SystemDrive\software\Microsoft\Azure Build Tools\WindowsAzureTools.vs120.exe"
+	     Path                = "c:\software\Microsoft\Azure Build Tools\WindowsAzureTools.vs120.exe"
 	     Name                = "Windows Azure Tools for Microsoft Visual Studio 2013 - v2.3"
 	     ProductId           = "E055B52B-39C5-4AA9-BD7C-05CC5D1774B7"
 	  }
