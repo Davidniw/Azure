@@ -269,7 +269,7 @@ configuration BuildFarm
 	     Name                = "Windows Azure Libraries for .NET – v2.3"
 	     ProductId           = "C0591F2A-45AD-4189-86A7-C2B1DF3D148D"
   	  }
-
+	<#
           Package AzureAuthoringTools
 	  {
 	     Ensure              = "Present"
@@ -277,7 +277,7 @@ configuration BuildFarm
 	     Name                = "Windows Azure Authoring Tools - v2.3"
    	     ProductId           = "CA53F7A1-A71D-4C7F-ABD2-7BDD26FE0D74"
 	  }
-
+	#>
 	  Package WindowsAzureTools
 	  {
 	     Ensure              = "Present"
