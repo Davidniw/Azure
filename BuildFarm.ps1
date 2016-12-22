@@ -21,6 +21,26 @@ configuration BuildFarm
 
     Node JumpBox
     {
+        xDSCDomainjoin JoinDomain
+        {
+            Domain = $domainName
+            Credential = $domainCredentials
+            JoinOU = "OU=KDK,OU=allPrivate,OU=allServers,OU=allMachines,DC=cloud,DC=rockend,DC=io"
+        }
+	
+	cChocoInstaller installChoco
+        {
+       	    InstallDir = "c:\software\choco"
+        }
+
+      	cChocoPackageInstaller installChrome
+        {
+	     Name        = "googlechrome"
+	     DependsOn   = "[cChocoInstaller]installChoco"
+	     #This will automatically try to upgrade if available, only if a version is not explicitly specified. 
+	     AutoUpgrade = $True
+        }
+	
         WindowsFeature RDSGateway
         {
             Ensure  = "Present"
