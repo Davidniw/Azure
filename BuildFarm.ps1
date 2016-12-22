@@ -37,8 +37,6 @@ configuration BuildFarm
         {
 	     Name        = "googlechrome"
 	     DependsOn   = "[cChocoInstaller]installChoco"
-	     #This will automatically try to upgrade if available, only if a version is not explicitly specified. 
-	     AutoUpgrade = $True
         }
 	
         WindowsFeature RDSGateway
@@ -95,8 +93,6 @@ configuration BuildFarm
         {
 	     Name        = "googlechrome"
 	     DependsOn   = "[cChocoInstaller]installChoco"
-	     #This will automatically try to upgrade if available, only if a version is not explicitly specified. 
-	     AutoUpgrade = $True
         }
         
         File Klondike
@@ -154,8 +150,6 @@ configuration BuildFarm
         {
 	    Name        = "googlechrome"
 	    DependsOn   = "[cChocoInstaller]installChoco"
-	    #This will automatically try to upgrade if available, only if a version is not explicitly specified. 
-	    AutoUpgrade = $True
         }
 
       
@@ -210,8 +204,6 @@ configuration BuildFarm
         {
 	    Name        = "googlechrome"
 	    DependsOn   = "[cChocoInstaller]installChoco"
-	    #This will automatically try to upgrade if available, only if a version is not explicitly specified. 
-	    AutoUpgrade = $True
         }
         
 	cChocoPackageInstaller installGit
@@ -338,8 +330,6 @@ configuration BuildFarm
         {
 	     Name        = "googlechrome"
 	     DependsOn   = "[cChocoInstaller]installChoco"
-	     #This will automatically try to upgrade if available, only if a version is not explicitly specified. 
-	     AutoUpgrade = $True
         }
         
         Environment slackToken
@@ -505,8 +495,6 @@ configuration BuildFarm
         {
 	     Name        = "googlechrome"
 	     DependsOn   = "[cChocoInstaller]installChoco"
-	     #This will automatically try to upgrade if available, only if a version is not explicitly specified. 
-	     AutoUpgrade = $True
         }
         
         WindowsFeature IIS
@@ -534,8 +522,6 @@ configuration BuildFarm
         {
 	     Name        = "googlechrome"
 	     DependsOn   = "[cChocoInstaller]installChoco"
-	     #This will automatically try to upgrade if available, only if a version is not explicitly specified. 
-	     AutoUpgrade = $True
         }
         
         WindowsFeature IIS
@@ -563,8 +549,6 @@ configuration BuildFarm
         {
 	     Name        = "googlechrome"
 	     DependsOn   = "[cChocoInstaller]installChoco"
-	     #This will automatically try to upgrade if available, only if a version is not explicitly specified. 
-	     AutoUpgrade = $True
         }
         
         WindowsFeature IIS
@@ -592,8 +576,6 @@ configuration BuildFarm
         {
 	     Name        = "googlechrome"
 	     DependsOn   = "[cChocoInstaller]installChoco"
-	     #This will automatically try to upgrade if available, only if a version is not explicitly specified. 
-	     AutoUpgrade = $True
         }
         
         WindowsFeature IIS
