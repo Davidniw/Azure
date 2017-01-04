@@ -17,7 +17,6 @@ configuration BuildFarm
     $sonarQubeCredential = Get-AutomationPSCredential -Name 'svcSonarQubeDB'
     $sqlServerLocalAdminCredential = Get-AutomationPSCredential -Name 'sqlServerLocalAdmin'
 
-    $slackToken = Get-AutomationVariable -Name 'slackToken'
     $domainName = Get-AutomationVariable -Name 'domainName'
 
     Node JumpBox
@@ -330,29 +329,6 @@ configuration BuildFarm
         {
             Name        = "googlechrome"
             DependsOn   = "[cChocoInstaller]installChoco"
-        }
-
-        Environment slackToken
-        {
-            Ensure = "Present"
-            Name = "slackToken"
-            Value = "$slackToken"
-        }
-
-        Script SlackMessage
-        {
-            GetScript = { }
-            TestScript = { $false }
-            SetScript = {
-                $ServiceStatus = (get-service SonarQube).status
-                Invoke-RestMethod -Uri https://slack.com/api/chat.postMessage -Body @{
-                    token    = $env:slackToken
-                    channel  = "@david.niwczyk"
-                    username = "Azure DSC"
-                    text     = "$("SonarQube service is") $($ServiceStatus) $("on") $($env:COMPUTERNAME)"
-                }
-            }
-            DependsOn = "[Environment]slackToken"
         }
 
         File SonarQube
