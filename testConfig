@@ -2,6 +2,8 @@ configuration TestConfig
 {
     Import-DscResource -ModuleName PSDesiredStateConfiguration
     
+    $svcTeamCityAgent = Get-AutomationPSCredential -Name 'svcTeamCityAgent'
+    
     Node WebServer
     {
         WindowsFeature IIS
@@ -33,10 +35,12 @@ configuration TestConfig
         }
         
         Service TeamCityBuildAgent
-        {
-            Name                  = "TeamCity Build Agent"
-            StartupType           = "Automatic"
-            State                 = "Running"
+        {   
+            DisplayName           = 'TeamCity Build Agent'
+            Name                  = 'TeamCity Build Agent'
+            StartupType           = 'Automatic'
+            State                 = 'Running'
+            Credential            = $svcTeamCityAgent
         }
     }
 }
