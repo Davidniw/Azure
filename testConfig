@@ -40,9 +40,7 @@ configuration TestConfig
             Name                  = 'TeamCity Build Agent'
             StartupType           = 'Automatic'
             State                 = 'Running'
-            Ensure                = 'Present'
             Credential            = $svcTeamCityAgent
-            Path                  = 'F:\BuildAgent\bin\service.start.bat'
         }
     }
 }
