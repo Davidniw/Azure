@@ -272,6 +272,7 @@ configuration BuildFarm
             ProductId           = "54277EE5-C729-4002-B3E2-0E78B3EF3F3E"
             DependsOn           = "[File]AzureStorageEmulator"
         }
+        #>
 
         Package AzureLibsForNet
         {
@@ -287,6 +288,7 @@ configuration BuildFarm
             Path                = "c:\software\Microsoft\Azure Build Tools\WindowsAzureAuthoringTools-x64.msi"
             Name                = "Windows Azure Authoring Tools - v2.3"
             ProductId           = "CA53F7A1-A71D-4C7F-ABD2-7BDD26FE0D74"
+            DependsOn           = "[Package]AzureLibsForNet"
         }
 
         Package WindowsAzureTools
@@ -295,8 +297,8 @@ configuration BuildFarm
             Path                = "c:\software\Microsoft\Azure Build Tools\WindowsAzureTools.vs120.exe"
             Name                = "Windows Azure Tools for Microsoft Visual Studio 2013 - v2.3"
             ProductId           = "E055B52B-39C5-4AA9-BD7C-05CC5D1774B7"
+            DependsOn           = "[Package]AzureAuthoringTools"
         }
-        #>
 
         #Install c:\software\Microsoft\sqljdbc\sqljdbc_4.2.6420.100_enu.exe (depends on copy jobs)
         #Install c:\software\TeamCity-10.0.2.exe (depends on previous and copy jobs)
