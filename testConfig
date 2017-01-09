@@ -41,6 +41,7 @@ configuration TestConfig
             StartupType           = 'Automatic'
             State                 = 'Running'
             Credential            = $svcTeamCityAgent
+            Path                  = 'F:\BuildAgent\bin\service.install'
         }
     }
 }
