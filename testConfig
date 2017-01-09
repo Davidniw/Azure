@@ -37,7 +37,7 @@ configuration TestConfig
         Service TeamCityBuildAgent
         {   
             DisplayName           = 'TeamCity Build Agent'
-            Name                  = 'TeamCity Build Agent'
+            Name                  = 'TCBuildAgent'
             StartupType           = 'Automatic'
             State                 = 'Running'
             Credential            = $svcTeamCityAgent
