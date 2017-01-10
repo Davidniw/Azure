@@ -272,7 +272,7 @@ configuration BuildFarm
             ProductId           = "54277EE5-C729-4002-B3E2-0E78B3EF3F3E"
             DependsOn           = "[File]AzureStorageEmulator"
         }
-        #>
+        
 
         Package AzureLibsForNet
         {
@@ -299,7 +299,7 @@ configuration BuildFarm
             ProductId           = "E055B52B-39C5-4AA9-BD7C-05CC5D1774B7"
             DependsOn           = "[Package]AzureAuthoringTools"
         }
-
+#>
         #Install c:\software\Microsoft\sqljdbc\sqljdbc_4.2.6420.100_enu.exe (depends on copy jobs)
         #Install c:\software\TeamCity-10.0.2.exe (depends on previous and copy jobs)
 
