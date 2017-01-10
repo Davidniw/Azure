@@ -10,7 +10,6 @@ configuration BuildFarm
     Import-DscResource -module xChrome
     Import-DscResource -module xDSCDomainjoin
     Import-DscResource -ModuleName cChoco
-    Import-DscResource -Module TeamCityAgentDSC
 
     #param for keyvault = svcSonarQubeDB
     $domainCredentials = Get-AutomationPSCredential -Name 'domainCreds'
