@@ -5,6 +5,8 @@ configuration TestConfig
     Import-DscResource -ModuleName cChoco
     
     $svcTeamCityAgent = Get-AutomationPSCredential -Name 'svcTeamCityAgent'
+    $domainCredentials = Get-AutomationPSCredential -Name 'domainCreds
+    $domainName = Get-AutomationVariable -Name 'domainName'
     
     Node WebServer
     {
