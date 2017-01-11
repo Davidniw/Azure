@@ -5,6 +5,7 @@ configuration TestConfig
     Import-DscResource -ModuleName cChoco
     
     $svcTeamCityAgent = Get-AutomationPSCredential -Name 'svcTeamCityAgent'
+    $storageCredential = Get-AutomationPSCredential -Name 'storageCredential'
     $domainCredentials = Get-AutomationPSCredential -Name 'domainCreds'
     $domainName = Get-AutomationVariable -Name 'domainName'
     
