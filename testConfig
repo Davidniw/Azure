@@ -189,12 +189,24 @@ configuration TestConfig
 
         #Copy "S:\Software\TeamCity\Config\*.*" to F:\TeamCityData\config (depends on all previous)
         #Copy S:\Software\TeamCity\Plugins\*.* to F:\TeamCityData\plugins
+        
         cChocoPackageInstaller TeamCityAgent
         {
             Ensure = 'Present'
             Name = "teamcityagent"
+            ChocoParams = "--allowemptychecksum" #Acceptable for internal HTTP sources
             Params = "serverUrl=http://teamcity.cloud.rockend.io"
         }
+        
+        Service TeamCityBuildAgent
+        {   
+            DisplayName           = 'TeamCity Build Agent'
+            Name                  = 'TCBuildAgent'
+            StartupType           = 'Automatic'
+            State                 = 'Running'
+            Credential            = $svcTeamCityAgent
+        }
+        
         WindowsFeature IIS
         {
             Ensure               = 'Absent'
