@@ -193,7 +193,7 @@ configuration TestConfig
         {
             Ensure = 'Present'
             Name = "teamcityagent"
-            Params = "http://serverUrl=teamcity.cloud.rockend.io"
+            Params = "serverUrl=http://teamcity.cloud.rockend.io"
         }
         WindowsFeature IIS
         {
