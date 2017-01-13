@@ -196,6 +196,26 @@ configuration TestConfig
             Params = "serverUrl=http://teamcity.cloud.rockend.io"
         }
         
+        Environment Git-nodejs
+        {
+            Ensure = "Present"
+            Name = "Path"
+            Path = $true
+            Value = "C:\Program Files\Git\cmd;C:\Program Files\nodejs\"
+        }
+        
+        # Delete service created by Chocolatey TeamCityAgent package
+        Service ChocolateyTeamCityBuildAgent
+        {   
+            DisplayName           = 'TeamCity Build Agent $env:COMPUTERNAME'
+            Name                  = '$env:COMPUTERNAME'
+            StartupType           = 'Automatic'
+            State                 = 'Running'
+            Ensure                = "Absent"
+            Credential            = $svcTeamCityAgent
+            DependsOn             = "[cChocoPackageInstaller]TeamCityAgent"
+        }
+        
         Service TeamCityBuildAgent
         {   
             DisplayName           = 'TeamCity Build Agent'
@@ -203,15 +223,18 @@ configuration TestConfig
             StartupType           = 'Automatic'
             State                 = 'Running'
             Credential            = $svcTeamCityAgent
-            DependsOn             = "[cChocoPackageInstaller]TeamCityAgent"
+            Path                  = 'C:\buildAgent\launcher\bin\TeamCityAgentService-windows-x86-32.exe -s C:\buildAgent\launcher\conf\wrapper.conf'
+            DependsOn             = "[Service]ChocolateyTeamCityBuildAgent"
         }
         
-        Environment Git-nodejs
+        File AzureStorageEmulatorScheduledTask
         {
-            Ensure = "Present"
-            Name = "Path"
-            Path = $true
-            Value = "C:\Program Files\Git\cmd;C:\Program Files\nodejs\"
+            DestinationPath = "C:\software\Microsoft\Azure Storage Emulator.xml"
+            Credential = $storageCredential
+            Ensure = "present"
+            SourcePath = "\\prodrockcoresoftware.file.core.windows.net\software\Software\Microsoft\Azure Storage Emulator\Azure Storage Emulator.xml"
+            Type = "File"
+            Recurse = $false
         }
         
         Script AzureStorageEmulator
@@ -223,8 +246,10 @@ configuration TestConfig
             return !($task = (Get-ScheduledTask -TaskName "Azure Storage Emulator" -ErrorAction SilentlyContinue) -eq $null) 
           }
           SetScript = { 
-            schtasks.exe /create /xml "c:\software\Azure Storage Emulator.xml" /tn "Azure Storage Emulator" /ru "SYSTEM" 
+            schtasks.exe /create /xml "C:\software\Microsoft\Azure Storage Emulator.xml" /tn "Azure Storage Emulator" /ru "SYSTEM" 
+            shutdown -r -f -t 0
           }
+          DependsOn = "[File]AzureStorageEmulatorScheduledTask"
         }
         
         WindowsFeature IIS
