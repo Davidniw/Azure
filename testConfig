@@ -96,12 +96,29 @@ configuration TestConfig
             #Params = ""
         }
 
-        cChocoPackageInstaller installMSBuildTools
+        File MSBuildTools14
+        {
+            DestinationPath = "c:\software\Microsoft\Build Tools\BuildTools_Full.exe"
+            Credential = $storageCredential
+            Ensure = "Present"
+            SourcePath = "\\prodrockcoresoftware.file.core.windows.net\software\Software\Microsoft\Microsoft Build Tools 2015\BuildTools_Full.exe"
+            Type = "File"
+            Recurse = $false
+        }
+        
+        Package installMSBuildTools14
+        {
+            Ensure              = "Present"
+            Path                = "c:\software\Microsoft\Build Tools\BuildTools_Full.exe"
+            Name                = "Microsoft Build Tools 14.0 (amd64)"
+            ProductId           = "8C918E5B-E238-401F-9F6E-4FB84B024CA2"
+            Arguments           = "/q"
+        }
+        cChocoPackageInstaller installMSBuildTools12
         {
             Ensure = 'Present'
             Name = "microsoft-build-tools"
-            Version = "12.0.21005.20140416"
-            #Params = ""
+            Version = "12.0.21005.1"
         }
 
         cChocoPackageInstaller NodeJS
@@ -118,16 +135,6 @@ configuration TestConfig
             #Params = ""
         }
 
-        File AzureStorageEmulator
-        {
-            DestinationPath = "c:\software\Microsoft\Azure Storage Emulator\MicrosoftAzureStorageEmulator.msi"
-            Credential = $storageCredential
-            Ensure = "Present"
-            SourcePath = "\\prodrockcoresoftware.file.core.windows.net\software\Software\Microsoft\Azure Storage Emulator\MicrosoftAzureStorageEmulator.msi"
-            Type = "File"
-            Recurse = $false
-        }
-
         File AzureBuildTools
         {
             DestinationPath = "c:\software\Microsoft\Azure Build Tools"
@@ -137,26 +144,22 @@ configuration TestConfig
             Type = "Directory"
             Recurse = $true
         }
-
-        File SQLEXPR
+        
+        cChocoPackageInstaller SQLServerLocalDB
         {
-            DestinationPath = "c:\software\Microsoft\SQL\SQLEXPR_x64_ENU.exe"
-            Credential = $storageCredential
-            Ensure = "Present"
-            SourcePath = "\\prodrockcoresoftware.file.core.windows.net\software\Software\Microsoft\SQL\SQLEXPR_x64_ENU.exe"
-            Type = "File"
-            Recurse = $false
+            Ensure = 'Present'
+            Name = "sqlserverlocaldb"
+            ChocoParams = "--allowemptychecksum"
+            #Params = ""
         }
-          <#DEPENDS ON SQL EXPRESS INSTALL
-        Package AzureStorageEmulator
+        
+        cChocoPackageInstaller AzureStorageEmulator
         {
-            Ensure              = "Present"
-            Path                = "$Env:SystemDrive\software\Microsoft\Azure Storage Emulator\MicrosoftAzureStorageEmulator.msi"
-            Name                = "Microsoft Azure Storage Emulator - v4.5"
-            ProductId           = "54277EE5-C729-4002-B3E2-0E78B3EF3F3E"
-            DependsOn           = "[File]AzureStorageEmulator"
+            Ensure = 'Present'
+            Name = "azurestorageemulator"
+            #Params = ""
+            DependsOn = "[cChocoPackageInstaller]SQLServerLocalDB"
         }
-        #>
 
         Package AzureLibsForNet
         {
@@ -184,18 +187,12 @@ configuration TestConfig
             Arguments           = "/q"
             DependsOn           = "[Package]AzureAuthoringTools"
         }
-
-        #Install c:\software\Microsoft\sqljdbc\sqljdbc_4.2.6420.100_enu.exe (depends on copy jobs)
-        #Install c:\software\TeamCity-10.0.2.exe (depends on previous and copy jobs)
-
-        #Copy "S:\Software\TeamCity\Config\*.*" to F:\TeamCityData\config (depends on all previous)
-        #Copy S:\Software\TeamCity\Plugins\*.* to F:\TeamCityData\plugins
         
         cChocoPackageInstaller TeamCityAgent
         {
             Ensure = 'Present'
             Name = "teamcityagent"
-            ChocoParams = "--allowemptychecksum" #Acceptable for internal HTTP sources
+            ChocoParams = "--allowemptychecksum"
             Params = "serverUrl=http://teamcity.cloud.rockend.io"
         }
         
@@ -206,6 +203,28 @@ configuration TestConfig
             StartupType           = 'Automatic'
             State                 = 'Running'
             Credential            = $svcTeamCityAgent
+            DependsOn             = "[cChocoPackageInstaller]TeamCityAgent"
+        }
+        
+        Environment Git-nodejs
+        {
+            Ensure = "Present"
+            Name = "Path"
+            Path = $true
+            Value = "C:\Program Files\Git\cmd;C:\Program Files\nodejs\"
+        }
+        
+        Script AzureStorageEmulator
+        {
+          GetScript = { 
+            # Do Nothing
+          }
+          TestScript = { 
+            return !($task = (Get-ScheduledTask -TaskName "Azure Storage Emulator" -ErrorAction SilentlyContinue) -eq $null) 
+          }
+          SetScript = { 
+            schtasks.exe /create /xml "c:\software\Azure Storage Emulator.xml" /tn "Azure Storage Emulator" /ru "SYSTEM" 
+          }
         }
         
         WindowsFeature IIS
