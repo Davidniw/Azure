@@ -58,26 +58,6 @@ configuration TestConfig
             JoinOU = "OU=TCA,OU=allPrivate,OU=allServers,OU=allMachines,DC=cloud,DC=rockend,DC=io"
         }
 
-        File TeamCity
-        {
-            DestinationPath = "c:\software\Jetbrains\TeamCity\TeamCity-10.0.2.exe"
-            Credential = $storageCredential
-            Ensure = "Present"
-            SourcePath = "\\prodrockcoresoftware.file.core.windows.net\software\Software\TeamCity\TeamCity-10.0.2.exe"
-            Type = "File"
-            Recurse = $false
-        }
-
-        File sqljdbc
-        {
-            DestinationPath = "c:\software\Microsoft\sqljdbc\sqljdbc_4.2.6420.100_enu.exe.lnk"
-            Credential = $storageCredential
-            Ensure = "Present"
-            SourcePath = "\\prodrockcoresoftware.file.core.windows.net\software\Software\TeamCity\sqljdbc_4.2.6420.100_enu.exe.lnk"
-            Type = "File"
-            Recurse = $false
-        }
-
         cChocoInstaller installChoco
         {
             InstallDir = "c:\software\choco"
@@ -247,7 +227,7 @@ configuration TestConfig
           }
           SetScript = { 
             schtasks.exe /create /xml "C:\software\Microsoft\Azure Storage Emulator.xml" /tn "Azure Storage Emulator" /ru "SYSTEM" 
-            shutdown -r -f -t 0
+            shutdown -r -f -t 10
           }
           DependsOn = "[File]AzureStorageEmulatorScheduledTask"
         }
