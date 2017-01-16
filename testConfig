@@ -187,8 +187,8 @@ configuration TestConfig
         # Delete service created by Chocolatey TeamCityAgent package
         Service ChocolateyTeamCityBuildAgent
         {   
-            DisplayName           = 'TeamCity Build Agent $env:COMPUTERNAME'
-            Name                  = '$env:COMPUTERNAME'
+            DisplayName           = "TeamCity Build Agent $env:COMPUTERNAME"
+            Name                  = $env:COMPUTERNAME
             StartupType           = 'Automatic'
             State                 = 'Running'
             Ensure                = "Absent"
