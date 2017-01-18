@@ -185,6 +185,7 @@ configuration TestConfig
         }
         
         # Delete service created by Chocolatey TeamCityAgent package
+        Script RemoveChocoTeamCityAgentService
         {   
             GetScript = { 
                 # Do Nothing
