@@ -30,6 +30,27 @@ configuration TestConfig
         }
     }
     
+    Node ElasticSearch
+    {
+        xDSCDomainjoin JoinDomain
+        {
+            Domain = $domainName
+            Credential = $domainCredentials
+            JoinOU = "OU=EC,OU=allProducts,OU=allServers,OU=allMachines,DC=cloud,DC=rockend,DC=io"
+        }
+
+        cChocoInstaller installChoco
+        {
+            InstallDir = "c:\software\choco"
+        }
+
+        cChocoPackageInstaller installChrome
+        {
+            Name        = "googlechrome"
+            DependsOn   = "[cChocoInstaller]installChoco"
+        }
+    }
+    
     Node TeamCityAgent
     {
         WindowsFeature IIS
@@ -224,15 +245,15 @@ configuration TestConfig
         
         Script AzureStorageEmulator
         {
-          GetScript = { 
+          GetScript = {
             # Do Nothing
           }
-          TestScript = { 
-            return !($task = (Get-ScheduledTask -TaskName "Azure Storage Emulator" -ErrorAction SilentlyContinue) -eq $null) 
+          TestScript = {
+            return !($task = (Get-ScheduledTask -TaskName "Azure Storage Emulator" -ErrorAction SilentlyContinue) -eq $null)
           }
-          SetScript = { 
+          SetScript = {
             Start-Process -FilePath "C:\Program Files (x86)\Microsoft SDKs\Azure\Storage Emulator\AzureStorageEmulator.exe" -Args "init -server localhost -forcecreate"
-            schtasks.exe /create /xml "C:\software\Microsoft\Azure Storage Emulator.xml" /tn "Azure Storage Emulator" /ru "SYSTEM" 
+            schtasks.exe /create /xml "C:\software\Microsoft\Azure Storage Emulator.xml" /tn "Azure Storage Emulator" /ru "SYSTEM"
             shutdown -r -f -t 10
           }
           DependsOn = "[File]AzureStorageEmulatorScheduledTask"
@@ -244,5 +265,4 @@ configuration TestConfig
             Name                 = 'Web-Server'
         }
     }
-
 }
