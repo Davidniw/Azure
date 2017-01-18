@@ -49,6 +49,12 @@ configuration TestConfig
             Name        = "googlechrome"
             DependsOn   = "[cChocoInstaller]installChoco"
         }
+        
+        cChocoPackageInstaller elasticsearch
+        {
+            Name        = "elasticsearch"
+            DependsOn   = "[cChocoInstaller]installChoco"
+        }
     }
     
     Node TeamCityAgent
