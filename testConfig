@@ -185,15 +185,19 @@ configuration TestConfig
         }
         
         # Delete service created by Chocolatey TeamCityAgent package
-        Service ChocolateyTeamCityBuildAgent
         {   
-            DisplayName           = "TeamCity Build Agent $env:COMPUTERNAME"
-            Name                  = $env:COMPUTERNAME
-            StartupType           = 'Automatic'
-            State                 = 'Running'
-            Ensure                = "Absent"
-            Credential            = $svcTeamCityAgent
-            DependsOn             = "[cChocoPackageInstaller]TeamCityAgent"
+            GetScript = { 
+                # Do Nothing
+            }
+            TestScript = { 
+                return ((Get-WmiObject -class Win32_Service -filter "name='$env:COMPUTERNAME'" -ErrorAction SilentlyContinue) -eq $null)
+
+            }
+            SetScript = {
+                Stop-Service $env:COMPUTERNAME
+                (Get-WmiObject -class Win32_Service -filter "name='$env:COMPUTERNAME'").delete()
+            }
+                      
         }
         
         Service TeamCityBuildAgent
@@ -204,7 +208,7 @@ configuration TestConfig
             State                 = 'Running'
             Credential            = $svcTeamCityAgent
             Path                  = 'C:\buildAgent\launcher\bin\TeamCityAgentService-windows-x86-32.exe -s C:\buildAgent\launcher\conf\wrapper.conf'
-            DependsOn             = "[Service]ChocolateyTeamCityBuildAgent"
+            DependsOn             = "[cChocoPackageInstaller]TeamCityAgent"
         }
         
         File AzureStorageEmulatorScheduledTask
@@ -226,6 +230,7 @@ configuration TestConfig
             return !($task = (Get-ScheduledTask -TaskName "Azure Storage Emulator" -ErrorAction SilentlyContinue) -eq $null) 
           }
           SetScript = { 
+            Start-Process -FilePath "C:\Program Files (x86)\Microsoft SDKs\Azure\Storage Emulator\AzureStorageEmulator.exe" -Args "init -server localhost -forcecreate"
             schtasks.exe /create /xml "C:\software\Microsoft\Azure Storage Emulator.xml" /tn "Azure Storage Emulator" /ru "SYSTEM" 
             shutdown -r -f -t 10
           }
