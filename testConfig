@@ -152,20 +152,14 @@ configuration TestConfig
             Recurse = $true
         }
         
-        cChocoPackageInstaller SQLServerLocalDB
+        File SQLEXPR
         {
-            Ensure = 'Present'
-            Name = "sqlserverlocaldb"
-            ChocoParams = "--allowemptychecksum"
-            #Params = ""
-        }
-        
-        cChocoPackageInstaller AzureStorageEmulator
-        {
-            Ensure = 'Present'
-            Name = "azurestorageemulator"
-            #Params = ""
-            DependsOn = "[cChocoPackageInstaller]SQLServerLocalDB"
+            DestinationPath = "c:\software\Microsoft\SQL\SQLEXPR_x64_ENU.exe"
+            Credential = $storageCredential
+            Ensure = "Present"
+            SourcePath = "\\prodrockcoresoftware.file.core.windows.net\software\Software\Microsoft\SQL\SQLEXPR_x64_ENU.exe"
+            Type = "File"
+            Recurse = $false
         }
 
         Package AzureLibsForNet
@@ -239,6 +233,31 @@ configuration TestConfig
             DependsOn             = "[cChocoPackageInstaller]TeamCityAgent"
         }
         
+        Script ExtractSQLEXPR
+        {   
+            GetScript = { 
+                # Do Nothing
+            }
+            TestScript = { 
+                return (Test-Path c:\software\Microsoft\SQL\SQLEXPR_x64_ENU\setup.exe)
+
+            }
+            SetScript = {
+                & "c:\software\Microsoft\SQL\SQLEXPR_x64_ENU.exe" /x:"c:\software\Microsoft\SQL\SQLEXPR_x64_ENU\" /u
+            }
+            DependsOn = "[File]SQLEXPR"
+        }
+
+        Package SQLExpress
+        {
+            Ensure = 'Present'
+            Name = 'Microsoft SQL Server 2014 Setup (English)'
+            Path = 'c:\software\Microsoft\SQL\SQLEXPR_x64_ENU\Setup.exe'
+            ProductId = '0EEBDCCA-EF5D-4896-9FEA-D7D410A57E8A'
+            Arguments = '/ACTION=Install /Q /IACCEPTSQLSERVERLICENSETERMS /INSTANCENAME="SQLExpress"'
+            DependsOn = '[Script]ExtractSQLEXPR'
+        }
+        
         File AzureStorageEmulatorScheduledTask
         {
             DestinationPath = "C:\software\Microsoft\Azure Storage Emulator.xml"
@@ -255,12 +274,13 @@ configuration TestConfig
             # Do Nothing
           }
           TestScript = {
-            return !($task = (Get-ScheduledTask -TaskName "Azure Storage Emulator" -ErrorAction SilentlyContinue) -eq $null)
+            return !((Get-Process "Azure Storage Emulator" -ErrorAction SilentlyContinue) -eq $null)
           }
           SetScript = {
             Start-Process -FilePath "C:\Program Files (x86)\Microsoft SDKs\Azure\Storage Emulator\AzureStorageEmulator.exe" -Args "init -server localhost -forcecreate"
             schtasks.exe /create /xml "C:\software\Microsoft\Azure Storage Emulator.xml" /tn "Azure Storage Emulator" /ru "SYSTEM"
-            shutdown -r -f -t 10
+            Start-Process -FilePath "C:\Program Files (x86)\Microsoft SDKs\Azure\Storage Emulator\AzureStorageEmulator.exe" -Args "start"
+            #shutdown -r -f -t 10
           }
           DependsOn = "[File]AzureStorageEmulatorScheduledTask"
         }
