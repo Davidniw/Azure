@@ -1,6 +1,7 @@
 configuration TestConfig
 {
     Import-DscResource -ModuleName PSDesiredStateConfiguration
+    Import-DscResource -Module cNtfsAccessControl
     Import-DscResource -module xDSCDomainjoin
     Import-DscResource -ModuleName cChoco
     
@@ -222,6 +223,23 @@ configuration TestConfig
                       
         }
         
+        cNtfsPermissionEntry svcTeamCityAgentPermission
+        {
+            Ensure              = 'Present'
+            Path                = 'C:\buildAgent\'
+            Principal           = 'svcTeamCityAgent@cloud.rockend.io'
+            AccessControlInformation = @(
+                cNtfsAccessControlInformation
+                {
+                    AccessControlType = 'Allow'
+                    FileSystemRights = 'Modify'
+                    Inheritance = 'ThisFolderSubfoldersAndFiles'
+                    NoPropagateInherit = $false
+                }
+            )
+            DependsOn           = '[cChocoPackageInstaller]TeamCityAgent'
+        }
+        
         Service TeamCityBuildAgent
         {   
             DisplayName           = 'TeamCity Build Agent'
@@ -258,6 +276,16 @@ configuration TestConfig
             DependsOn = '[Script]ExtractSQLEXPR'
         }
         
+        File AzureStorageEmulator
+        {
+            DestinationPath = "c:\software\Microsoft\Azure Storage Emulator\MicrosoftAzureStorageEmulator.msi"
+            Credential = $storageCredential
+            Ensure = "Present"
+            SourcePath = "\\prodrockcoresoftware.file.core.windows.net\software\Software\Microsoft\Azure Storage Emulator\MicrosoftAzureStorageEmulator.msi"
+            Type = "File"
+            Recurse = $false
+        }
+        
         File AzureStorageEmulatorScheduledTask
         {
             DestinationPath = "C:\software\Microsoft\Azure Storage Emulator.xml"
@@ -266,6 +294,15 @@ configuration TestConfig
             SourcePath = "\\prodrockcoresoftware.file.core.windows.net\software\Software\Microsoft\Azure Storage Emulator\Azure Storage Emulator.xml"
             Type = "File"
             Recurse = $false
+        }
+        
+        Package AzureStorageEmulator
+        {
+            Ensure              = "Present"
+            Path                = "$Env:SystemDrive\software\Microsoft\Azure Storage Emulator\MicrosoftAzureStorageEmulator.msi"
+            Name                = "Microsoft Azure Storage Emulator - v4.5"
+            ProductId           = "54277EE5-C729-4002-B3E2-0E78B3EF3F3E"
+            DependsOn           = "[File]AzureStorageEmulator"
         }
         
         Script AzureStorageEmulator
