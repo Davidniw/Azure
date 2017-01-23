@@ -326,7 +326,7 @@ configuration TestConfig
             # Do Nothing
           }
           TestScript = {
-            return !((Get-Process "Azure Storage Emulator" -ErrorAction SilentlyContinue) -eq $null)
+            return !((Get-ScheduledTask -TaskName "Azure Storage Emulator" -ErrorAction SilentlyContinue) -eq $null)
           }
           SetScript = {
             Start-Process -FilePath "C:\Program Files (x86)\Microsoft SDKs\Azure\Storage Emulator\AzureStorageEmulator.exe" -Args "init -server localhost -forcecreate"
