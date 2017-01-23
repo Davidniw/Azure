@@ -251,6 +251,21 @@ configuration TestConfig
             DependsOn             = "[cChocoPackageInstaller]TeamCityAgent"
         }
         
+        <#
+        Script StartTeamCityAgentService
+        {   
+            GetScript = { 
+                # Do Nothing
+            }
+            TestScript = { 
+                return ((Get-WmiObject -class Win32_Service -filter "name='TCBuildAgent'" -ErrorAction SilentlyContinue).state -eq 'Running')
+            }
+            SetScript = {
+                Start-Service TCBuildAgent
+            }            
+        }
+        #>
+        
         Script ExtractSQLEXPR
         {   
             GetScript = { 
@@ -316,8 +331,7 @@ configuration TestConfig
           SetScript = {
             Start-Process -FilePath "C:\Program Files (x86)\Microsoft SDKs\Azure\Storage Emulator\AzureStorageEmulator.exe" -Args "init -server localhost -forcecreate"
             schtasks.exe /create /xml "C:\software\Microsoft\Azure Storage Emulator.xml" /tn "Azure Storage Emulator" /ru "SYSTEM"
-            Start-Process -FilePath "C:\Program Files (x86)\Microsoft SDKs\Azure\Storage Emulator\AzureStorageEmulator.exe" -Args "start"
-            #shutdown -r -f -t 10
+            shutdown -r -f -t 10
           }
           DependsOn = "[File]AzureStorageEmulatorScheduledTask"
         }
