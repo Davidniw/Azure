@@ -248,6 +248,7 @@ configuration TestConfig
             StartupType           = 'Automatic'
             State                 = 'Running'
             Credential            = $svcTeamCityAgent
+            Path                  = 'C:\buildAgent\launcher\bin\TeamCityAgentService-windows-x86-32.exe -s C:\buildAgent\launcher\conf\wrapper.conf'
             DependsOn             = "[cChocoPackageInstaller]TeamCityAgent"
         }
         
