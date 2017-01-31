@@ -343,7 +343,7 @@ configuration TestConfig
         {
             Source = '\\privvmtcaape01.cloud.rockend.io\C$\Users\svcTeamCityAgent\.ssh'
             Destination = 'C:\Users\svcTeamCityAgent\.ssh'
-            PsDscRunAsCredential = $svcTeamCityAgent
+            PsDscRunAsCredential = $robocopyCredential
         }
         
         WindowsFeature IIS
