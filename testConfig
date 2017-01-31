@@ -4,7 +4,9 @@ configuration TestConfig
     Import-DscResource -Module cNtfsAccessControl
     Import-DscResource -module xDSCDomainjoin
     Import-DscResource -ModuleName cChoco
+    Import-DscResource -ModuleName xRobocopy
     
+    $robocopyCredential = Get-AutomationPSCredential -Name 'robocopyCredential'
     $svcTeamCityAgent = Get-AutomationPSCredential -Name 'svcTeamCityAgent'
     $storageCredential = Get-AutomationPSCredential -Name 'storageCredential'
     $domainCredentials = Get-AutomationPSCredential -Name 'domainCreds'
@@ -335,6 +337,13 @@ configuration TestConfig
             shutdown -r -f -t 10
           }
           DependsOn = "[File]AzureStorageEmulatorScheduledTask"
+        }
+        
+        xRobocopy Hosts
+        {
+            Source = '\\privvmtcaape01.cloud.rockend.io\C$\Users\svcTeamCityAgent\.ssh'
+            Destination = 'C:\Users\svcTeamCityAgent\.ssh'
+            PsDscRunAsCredential = $svcTeamCityAgent
         }
         
         WindowsFeature IIS
