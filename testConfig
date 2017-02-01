@@ -213,9 +213,8 @@ configuration TestConfig
                     $agentDir = 'C:\Test\buildAgent'
                     Add-Type -assembly “system.io.compression.filesystem”
                     [io.compression.zipfile]::ExtractToDirectory($output, $agentDir)
-
-                    
                 }
+             Dependson = "[Script]DownloadBuildAgent"
         }
         Script ConfigureBuildAgent
         {   
@@ -241,6 +240,7 @@ configuration TestConfig
                              -replace 'TeamCity Build Agent', "TeamCity Build Agent $agentName" `
                         } | Set-Content $agentDir\launcher\conf\wrapper.conf
                 }
+            Dependson = "[Script]ExtractBuildAgent"
         }
         
         Environment Git-nodejs
@@ -283,7 +283,6 @@ configuration TestConfig
                     NoPropagateInherit = $false
                 }
             )
-            DependsOn           = '[cChocoPackageInstaller]TeamCityAgent'
         }
         
         Service TeamCityBuildAgent
@@ -294,7 +293,6 @@ configuration TestConfig
             State                 = 'Running'
             Credential            = $svcTeamCityAgent
             Path                  = 'C:\buildAgent\launcher\bin\TeamCityAgentService-windows-x86-32.exe -s C:\buildAgent\launcher\conf\wrapper.conf'
-            DependsOn             = "[cChocoPackageInstaller]TeamCityAgent"
         }
         
         <#
