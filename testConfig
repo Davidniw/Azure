@@ -211,7 +211,7 @@ configuration TestConfig
             TestScript = { return (Test-Path C:\buildAgent) }
             SetScript = {
                     $output = 'c:\buildagent.zip'
-                    $agentDir = 'C:\Test\buildAgent'
+                    $agentDir = 'C:\buildAgent'
                     Add-Type -assembly “system.io.compression.filesystem”
                     [io.compression.zipfile]::ExtractToDirectory($output, $agentDir)
                 }
