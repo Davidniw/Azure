@@ -192,12 +192,55 @@ configuration TestConfig
             DependsOn           = "[Package]AzureAuthoringTools"
         }
         
-        cChocoPackageInstaller TeamCityAgent
-        {
-            Ensure = 'Present'
-            Name = "teamcityagent"
-            ChocoParams = "--allowemptychecksum"
-            Params = "serverUrl=http://teamcity.cloud.rockend.io agentName=TCBuildAgent"
+        Script DownloadBuildAgent
+        {   
+            GetScript = { }
+            TestScript = { return (Test-Path C:\buildAgent.zip }
+            SetScript = {
+                    $url = 'http://teamcity.cloud.rockend.io/update/buildagent.zip'
+                    $wc = New-Object System.Net.WebClient
+                    $output = 'c:\buildagent.zip'
+                    $wc.DownloadFile($url, $output)
+                }
+        }
+
+        Script ExtractBuildAgent
+        {   
+            GetScript = { }
+            TestScript = { return (Test-Path C:\buildAgent) }
+            SetScript = {
+                    $output = 'c:\buildagent.zip'
+                    $agentDir = 'C:\Test\buildAgent'
+                    Add-Type -assembly “system.io.compression.filesystem”
+                    [io.compression.zipfile]::ExtractToDirectory($output, $agentDir)
+
+                    
+                }
+        }
+        Script ConfigureBuildAgent
+        {   
+            GetScript = { }
+            TestScript = { $false }
+            SetScript = {
+                    $serverUrl = 'http://teamcity.cloud.rockend.io'
+                    $agentDir = 'C:\buildAgent'
+                    $agentName = $env:COMPUTERNAME
+                    $ownPort = '9090'
+
+                    # Configure agent
+                    copy $agentDir\conf\buildAgent.dist.properties $agentDir\conf\buildAgent.properties
+                    (Get-Content $agentDir\conf\buildAgent.properties) | Foreach-Object {
+                        $_ -replace 'serverUrl=http://localhost:8111/', "serverUrl=$serverUrl" `
+                         -replace 'name=', "name=$agentName" `
+                         -replace 'ownPort=9090', "ownPort=$ownPort"
+                        } | Set-Content $agentDir\conf\buildAgent.properties
+ 
+                    # Configure service wrapper to allow multiple instances on a single machine
+                    (Get-Content $agentDir\launcher\conf\wrapper.conf) | Foreach-Object {
+                        $_ -replace 'TCBuildAgent', "$agentName" `
+                             -replace 'TeamCity Build Agent', "TeamCity Build Agent $agentName" `
+                        } | Set-Content $agentDir\launcher\conf\wrapper.conf
+                }
         }
         
         Environment Git-nodejs
