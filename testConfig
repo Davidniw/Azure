@@ -195,7 +195,7 @@ configuration TestConfig
         Script DownloadBuildAgent
         {   
             GetScript = { }
-            TestScript = { return (Test-Path C:\buildAgent.zip }
+            TestScript = { return (Test-Path C:\buildAgent.zip) }
             SetScript = {
                     $url = 'http://teamcity.cloud.rockend.io/update/buildagent.zip'
                     $wc = New-Object System.Net.WebClient
