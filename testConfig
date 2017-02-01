@@ -79,7 +79,7 @@ configuration TestConfig
         }
     }
     
-        Node TeamCityAgentFull
+    Node TeamCityAgentFull
     {
         xDSCDomainjoin JoinDomain
         {
@@ -171,6 +171,7 @@ configuration TestConfig
             Path                = "c:\software\Microsoft\Azure Build Tools\WindowsAzureLibsForNet-x64.msi"
             Name                = "Windows Azure Libraries for .NET – v2.3"
             ProductId           = "C0591F2A-45AD-4189-86A7-C2B1DF3D148D"
+            DependsOn           = "[File]AzureBuildTools"
         }
 
         Package AzureAuthoringTools
@@ -317,7 +318,6 @@ configuration TestConfig
             }
             TestScript = { 
                 return (Test-Path c:\software\Microsoft\SQL\SQLEXPR_x64_ENU\setup.exe)
-
             }
             SetScript = {
                 & "c:\software\Microsoft\SQL\SQLEXPR_x64_ENU.exe" /x:"c:\software\Microsoft\SQL\SQLEXPR_x64_ENU\" /u
@@ -377,7 +377,7 @@ configuration TestConfig
             schtasks.exe /create /xml "C:\software\Microsoft\Azure Storage Emulator.xml" /tn "Azure Storage Emulator" /ru "SYSTEM"
             shutdown -r -f -t 10
           }
-          DependsOn = "[File]AzureStorageEmulatorScheduledTask"
+          DependsOn = "[Package]AzureStorageEmulator"
         }
         
         xRobocopy Hosts
