@@ -217,6 +217,7 @@ configuration TestConfig
             GetScript = { }
             TestScript = { return (Test-Path C:\buildAgent) }
             SetScript = {
+            <# NEED TRY CATCH TO ENSURE ZIP FILE ISN'T CURRUPT #>
                     $output = 'c:\buildagent.zip'
                     $agentDir = 'C:\buildAgent'
                     Add-Type -assembly “system.io.compression.filesystem”
@@ -238,15 +239,9 @@ configuration TestConfig
                     copy $agentDir\conf\buildAgent.dist.properties $agentDir\conf\buildAgent.properties
                     (Get-Content $agentDir\conf\buildAgent.properties) | Foreach-Object {
                         $_ -replace 'serverUrl=http://localhost:8111/', "serverUrl=$serverUrl" `
-                         -replace 'name=', "name=$agentName" `
+                         -replace '.name=', ".name=$agentName" `
                          -replace 'ownPort=9090', "ownPort=$ownPort"
                         } | Set-Content $agentDir\conf\buildAgent.properties
- 
-                    # Configure service wrapper to allow multiple instances on a single machine
-                    (Get-Content $agentDir\launcher\conf\wrapper.conf) | Foreach-Object {
-                        $_ -replace 'TCBuildAgent', "$agentName" `
-                             -replace 'TeamCity Build Agent', "TeamCity Build Agent $agentName" `
-                        } | Set-Content $agentDir\launcher\conf\wrapper.conf
                 }
             Dependson = "[Script]ExtractBuildAgent"
         }
