@@ -295,7 +295,7 @@ configuration TestConfig
             State                 = 'Running'
             Credential            = $svcTeamCityAgent
             Path                  = 'C:\buildAgent\launcher\bin\TeamCityAgentService-windows-x86-32.exe -s C:\buildAgent\launcher\conf\wrapper.conf'
-            DependsOn             = "[Script]ConfigureBuildAgent"
+            DependsOn             = @("[Script]ConfigureBuildAgent","[cNtfsPermissionEntry]svcTeamCityAgentPermission")
         }
         
         Script StartTeamCityAgentService
@@ -309,9 +309,7 @@ configuration TestConfig
             SetScript = {
                 Start-Service TCBuildAgent
             }
-            DependsOn = "[Service]TeamCityBuildAgent"
         }
-        
         
         Script ExtractSQLEXPR
         {   
@@ -325,16 +323,6 @@ configuration TestConfig
                 & "c:\software\Microsoft\SQL\SQLEXPR_x64_ENU.exe" /x:"c:\software\Microsoft\SQL\SQLEXPR_x64_ENU\" /u
             }
             DependsOn = "[File]SQLEXPR"
-        }
-
-        Package SQLExpress
-        {
-            Ensure = 'Present'
-            Name = 'Microsoft SQL Server 2014 Setup (English)'
-            Path = 'c:\software\Microsoft\SQL\SQLEXPR_x64_ENU\Setup.exe'
-            ProductId = '0EEBDCCA-EF5D-4896-9FEA-D7D410A57E8A'
-            Arguments = '/ACTION=Install /Q /IACCEPTSQLSERVERLICENSETERMS /INSTANCENAME="SQLExpress"'
-            DependsOn = "[Script]ExtractSQLEXPR"
         }
         
         File AzureStorageEmulator
@@ -365,6 +353,16 @@ configuration TestConfig
             ProductId           = "54277EE5-C729-4002-B3E2-0E78B3EF3F3E"
             DependsOn           = "[File]AzureStorageEmulator"
         }
+
+        Package SQLExpress
+        {
+            Ensure = 'Present'
+            Name = 'Microsoft SQL Server 2014 Setup (English)'
+            Path = 'c:\software\Microsoft\SQL\SQLEXPR_x64_ENU\Setup.exe'
+            ProductId = '0EEBDCCA-EF5D-4896-9FEA-D7D410A57E8A'
+            Arguments = '/ACTION=Install /Q /IACCEPTSQLSERVERLICENSETERMS /INSTANCENAME="SQLExpress"'
+            DependsOn = "[Script]ExtractSQLEXPR"
+        }
         
         Script AzureStorageEmulator
         {
@@ -379,7 +377,7 @@ configuration TestConfig
             schtasks.exe /create /xml "C:\software\Microsoft\Azure Storage Emulator.xml" /tn "Azure Storage Emulator" /ru "SYSTEM"
             shutdown -r -f -t 10
           }
-          DependsOn = @("[Package]AzureStorageEmulator","[File]AzureStorageEmulatorScheduledTask")
+          DependsOn = @("[Package]AzureStorageEmulator","[Package]SQLExpress","[File]AzureStorageEmulatorScheduledTask")
         }
         
         xRobocopy Hosts
