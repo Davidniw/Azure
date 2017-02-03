@@ -228,7 +228,7 @@ configuration TestConfig
         Script ConfigureBuildAgent
         {   
             GetScript = { }
-            TestScript = { $false }
+            TestScript = { return (Test-Path C:\buildAgent\conf\buildAgent.properties) }
             SetScript = {
                     $serverUrl = 'http://teamcity.cloud.rockend.io'
                     $agentDir = 'C:\buildAgent'
@@ -239,7 +239,7 @@ configuration TestConfig
                     copy $agentDir\conf\buildAgent.dist.properties $agentDir\conf\buildAgent.properties
                     (Get-Content $agentDir\conf\buildAgent.properties) | Foreach-Object {
                         $_ -replace 'serverUrl=http://localhost:8111/', "serverUrl=$serverUrl" `
-                         -replace '.name=', ".name=$agentName" `
+                         -replace 'name=', "name=$agentName" `
                          -replace 'ownPort=9090', "ownPort=$ownPort"
                         } | Set-Content $agentDir\conf\buildAgent.properties
                 }
