@@ -165,33 +165,13 @@ configuration BuildFarm
         }
     }
 
-    Node TeamCityAgent
+    Node TeamCityAgentFull
     {
         xDSCDomainjoin JoinDomain
         {
             Domain = $domainName
             Credential = $domainCredentials
             JoinOU = "OU=TCA,OU=allPrivate,OU=allServers,OU=allMachines,DC=cloud,DC=rockend,DC=io"
-        }
-
-        File TeamCity
-        {
-            DestinationPath = "c:\software\Jetbrains\TeamCity\TeamCity-10.0.2.exe"
-            Credential = $storageCredential
-            Ensure = "Present"
-            SourcePath = "\\prodrockcoresoftware.file.core.windows.net\software\Software\TeamCity\TeamCity-10.0.2.exe"
-            Type = "File"
-            Recurse = $false
-        }
-
-        File sqljdbc
-        {
-            DestinationPath = "c:\software\Microsoft\sqljdbc\sqljdbc_4.2.6420.100_enu.exe.lnk"
-            Credential = $storageCredential
-            Ensure = "Present"
-            SourcePath = "\\prodrockcoresoftware.file.core.windows.net\software\Software\TeamCity\sqljdbc_4.2.6420.100_enu.exe.lnk"
-            Type = "File"
-            Recurse = $false
         }
 
         cChocoInstaller installChoco
@@ -212,12 +192,30 @@ configuration BuildFarm
             #Params = ""
         }
 
-        cChocoPackageInstaller installMSBuildTools
+        File MSBuildTools14
+        {
+            DestinationPath = "c:\software\Microsoft\Build Tools\BuildTools_Full.exe"
+            Credential = $storageCredential
+            Ensure = "Present"
+            SourcePath = "\\prodrockcoresoftware.file.core.windows.net\software\Software\Microsoft\Microsoft Build Tools 2015\BuildTools_Full.exe"
+            Type = "File"
+            Recurse = $false
+        }
+        
+        Package installMSBuildTools14
+        {
+            Ensure              = "Present"
+            Path                = "c:\software\Microsoft\Build Tools\BuildTools_Full.exe"
+            Name                = "Microsoft Build Tools 14.0 (amd64)"
+            ProductId           = "8C918E5B-E238-401F-9F6E-4FB84B024CA2"
+            Arguments           = "/q"
+            DependsOn           = "[File]MSBuildTools14"
+        }
+        cChocoPackageInstaller installMSBuildTools12
         {
             Ensure = 'Present'
             Name = "microsoft-build-tools"
-            Version = "12.0.21005.20140416"
-            #Params = ""
+            Version = "12.0.21005.1"
         }
 
         cChocoPackageInstaller NodeJS
@@ -233,15 +231,11 @@ configuration BuildFarm
             Name = "redis-64"
             #Params = ""
         }
-
-        File AzureStorageEmulator
+        
+        cChocoPackageInstaller JavaRuntimeEnvironment
         {
-            DestinationPath = "c:\software\Microsoft\Azure Storage Emulator\MicrosoftAzureStorageEmulator.msi"
-            Credential = $storageCredential
-            Ensure = "Present"
-            SourcePath = "\\prodrockcoresoftware.file.core.windows.net\software\Software\Microsoft\Azure Storage Emulator\MicrosoftAzureStorageEmulator.msi"
-            Type = "File"
-            Recurse = $false
+            Ensure = 'Present'
+            Name = "server-jre"
         }
 
         File AzureBuildTools
@@ -253,7 +247,7 @@ configuration BuildFarm
             Type = "Directory"
             Recurse = $true
         }
-
+        
         File SQLEXPR
         {
             DestinationPath = "c:\software\Microsoft\SQL\SQLEXPR_x64_ENU.exe"
@@ -263,16 +257,6 @@ configuration BuildFarm
             Type = "File"
             Recurse = $false
         }
-          <#DEPENDS ON SQL EXPRESS INSTALL
-        Package AzureStorageEmulator
-        {
-            Ensure              = "Present"
-            Path                = "$Env:SystemDrive\software\Microsoft\Azure Storage Emulator\MicrosoftAzureStorageEmulator.msi"
-            Name                = "Microsoft Azure Storage Emulator - v4.5"
-            ProductId           = "54277EE5-C729-4002-B3E2-0E78B3EF3F3E"
-            DependsOn           = "[File]AzureStorageEmulator"
-        }
-        
 
         Package AzureLibsForNet
         {
@@ -280,6 +264,7 @@ configuration BuildFarm
             Path                = "c:\software\Microsoft\Azure Build Tools\WindowsAzureLibsForNet-x64.msi"
             Name                = "Windows Azure Libraries for .NET – v2.3"
             ProductId           = "C0591F2A-45AD-4189-86A7-C2B1DF3D148D"
+            DependsOn           = @("[File]AzureBuildTools","[Package]installMSBuildTools14")
         }
 
         Package AzureAuthoringTools
@@ -288,7 +273,7 @@ configuration BuildFarm
             Path                = "c:\software\Microsoft\Azure Build Tools\WindowsAzureAuthoringTools-x64.msi"
             Name                = "Windows Azure Authoring Tools - v2.3"
             ProductId           = "CA53F7A1-A71D-4C7F-ABD2-7BDD26FE0D74"
-            DependsOn           = "[Package]AzureLibsForNet"
+            DependsOn           = @("[File]AzureBuildTools","[Package]AzureLibsForNet")
         }
 
         Package WindowsAzureTools
@@ -297,15 +282,180 @@ configuration BuildFarm
             Path                = "c:\software\Microsoft\Azure Build Tools\WindowsAzureTools.vs120.exe"
             Name                = "Windows Azure Tools for Microsoft Visual Studio 2013 - v2.3"
             ProductId           = "E055B52B-39C5-4AA9-BD7C-05CC5D1774B7"
-            DependsOn           = "[Package]AzureAuthoringTools"
+            Arguments           = "/q"
+            DependsOn           = @("[File]AzureBuildTools","[Package]AzureAuthoringTools")
         }
-#>
-        #Install c:\software\Microsoft\sqljdbc\sqljdbc_4.2.6420.100_enu.exe (depends on copy jobs)
-        #Install c:\software\TeamCity-10.0.2.exe (depends on previous and copy jobs)
+        
+        Script DownloadBuildAgent
+        {   
+            GetScript = { }
+            TestScript = { return (Test-Path C:\buildAgent.zip) }
+            SetScript = {
+                    $url = 'http://teamcity.cloud.rockend.io/update/buildagent.zip'
+                    $wc = New-Object System.Net.WebClient
+                    $output = 'c:\buildagent.zip'
+                    $wc.DownloadFile($url, $output)
+                }
+        }
 
-        #Copy "S:\Software\TeamCity\Config\*.*" to F:\TeamCityData\config (depends on all previous)
-        #Copy S:\Software\TeamCity\Plugins\*.* to F:\TeamCityData\plugins
+        Script ExtractBuildAgent
+        {   
+            GetScript = { }
+            TestScript = { return (Test-Path C:\buildAgent) }
+            SetScript = {
+            <# NEED TRY CATCH TO ENSURE ZIP FILE ISN'T CURRUPT #>
+                    $output = 'c:\buildagent.zip'
+                    $agentDir = 'C:\buildAgent'
+                    Add-Type -assembly “system.io.compression.filesystem”
+                    [io.compression.zipfile]::ExtractToDirectory($output, $agentDir)
+                }
+             Dependson = "[Script]DownloadBuildAgent"
+        }
+        Script ConfigureBuildAgent
+        {   
+            GetScript = { }
+            TestScript = { return (Test-Path C:\buildAgent\conf\buildAgent.properties) }
+            SetScript = {
+                    $serverUrl = 'http://teamcity.cloud.rockend.io'
+                    $agentDir = 'C:\buildAgent'
+                    $agentName = $env:COMPUTERNAME
+                    $ownPort = '9090'
 
+                    # Configure agent
+                    copy $agentDir\conf\buildAgent.dist.properties $agentDir\conf\buildAgent.properties
+                    (Get-Content $agentDir\conf\buildAgent.properties) | Foreach-Object {
+                        $_ -replace 'serverUrl=http://localhost:8111/', "serverUrl=$serverUrl" `
+                         -replace 'name=', "name=$agentName" `
+                         -replace 'ownPort=9090', "ownPort=$ownPort"
+                        } | Set-Content $agentDir\conf\buildAgent.properties
+                }
+            Dependson = "[Script]ExtractBuildAgent"
+        }
+        
+        Environment Git-nodejs
+        {
+            Ensure = "Present"
+            Name = "Path"
+            Path = $true
+            Value = "C:\Program Files\Git\cmd;C:\Program Files\nodejs\"
+        }
+        
+        cNtfsPermissionEntry svcTeamCityAgentPermission
+        {
+            Ensure              = 'Present'
+            Path                = 'C:\buildAgent\'
+            Principal           = 'svcTeamCityAgent@cloud.rockend.io'
+            AccessControlInformation = @(
+                cNtfsAccessControlInformation
+                {
+                    AccessControlType = 'Allow'
+                    FileSystemRights = 'Modify'
+                    Inheritance = 'ThisFolderSubfoldersAndFiles'
+                    NoPropagateInherit = $false
+                }
+            )
+        }
+        
+        Service TeamCityBuildAgent
+        {   
+            DisplayName           = 'TeamCity Build Agent'
+            Name                  = 'TCBuildAgent'
+            StartupType           = 'Automatic'
+            State                 = 'Running'
+            Credential            = $svcTeamCityAgent
+            Path                  = 'C:\buildAgent\launcher\bin\TeamCityAgentService-windows-x86-32.exe -s C:\buildAgent\launcher\conf\wrapper.conf'
+            DependsOn             = @("[Script]ConfigureBuildAgent","[cNtfsPermissionEntry]svcTeamCityAgentPermission")
+        }
+        
+        Script StartTeamCityAgentService
+        {   
+            GetScript = { 
+                # Do Nothing
+            }
+            TestScript = { 
+                return ((Get-WmiObject -class Win32_Service -filter "name='TCBuildAgent'" -ErrorAction SilentlyContinue).state -eq 'Running')
+            }
+            SetScript = {
+                Start-Service TCBuildAgent
+            }
+        }
+        
+        Script ExtractSQLEXPR
+        {   
+            GetScript = { 
+                # Do Nothing
+            }
+            TestScript = { 
+                return (Test-Path c:\software\Microsoft\SQL\SQLEXPR_x64_ENU\setup.exe)
+            }
+            SetScript = {
+                & "c:\software\Microsoft\SQL\SQLEXPR_x64_ENU.exe" /x:"c:\software\Microsoft\SQL\SQLEXPR_x64_ENU\" /u
+            }
+            DependsOn = "[File]SQLEXPR"
+        }
+        
+        File AzureStorageEmulator
+        {
+            DestinationPath = "c:\software\Microsoft\Azure Storage Emulator\MicrosoftAzureStorageEmulator.msi"
+            Credential = $storageCredential
+            Ensure = "Present"
+            SourcePath = "\\prodrockcoresoftware.file.core.windows.net\software\Software\Microsoft\Azure Storage Emulator\MicrosoftAzureStorageEmulator.msi"
+            Type = "File"
+            Recurse = $false
+        }
+        
+        File AzureStorageEmulatorScheduledTask
+        {
+            DestinationPath = "C:\software\Microsoft\Azure Storage Emulator.xml"
+            Credential = $storageCredential
+            Ensure = "present"
+            SourcePath = "\\prodrockcoresoftware.file.core.windows.net\software\Software\Microsoft\Azure Storage Emulator\Azure Storage Emulator.xml"
+            Type = "File"
+            Recurse = $false
+        }
+        
+        Package AzureStorageEmulator
+        {
+            Ensure              = "Present"
+            Path                = "$Env:SystemDrive\software\Microsoft\Azure Storage Emulator\MicrosoftAzureStorageEmulator.msi"
+            Name                = "Microsoft Azure Storage Emulator - v4.5"
+            ProductId           = "54277EE5-C729-4002-B3E2-0E78B3EF3F3E"
+            DependsOn           = "[File]AzureStorageEmulator"
+        }
+
+        Package SQLExpress
+        {
+            Ensure = 'Present'
+            Name = 'Microsoft SQL Server 2014 Setup (English)'
+            Path = 'c:\software\Microsoft\SQL\SQLEXPR_x64_ENU\Setup.exe'
+            ProductId = '0EEBDCCA-EF5D-4896-9FEA-D7D410A57E8A'
+            Arguments = '/ACTION=Install /Q /IACCEPTSQLSERVERLICENSETERMS /INSTANCENAME="SQLExpress"'
+            DependsOn = "[Script]ExtractSQLEXPR"
+        }
+        
+        Script AzureStorageEmulator
+        {
+          GetScript = {
+            # Do Nothing
+          }
+          TestScript = {
+            return !((Get-ScheduledTask -TaskName "Azure Storage Emulator" -ErrorAction SilentlyContinue) -eq $null)
+          }
+          SetScript = {
+            Start-Process -FilePath "C:\Program Files (x86)\Microsoft SDKs\Azure\Storage Emulator\AzureStorageEmulator.exe" -Args "init -server localhost -forcecreate"
+            schtasks.exe /create /xml "C:\software\Microsoft\Azure Storage Emulator.xml" /tn "Azure Storage Emulator" /ru "SYSTEM"
+            shutdown -r -f -t 10
+          }
+          DependsOn = @("[Package]AzureStorageEmulator","[Package]SQLExpress","[File]AzureStorageEmulatorScheduledTask")
+        }
+        
+        xRobocopy Hosts
+        {
+            Source = '\\privvmtcaape01.cloud.rockend.io\C$\Users\svcTeamCityAgent\.ssh'
+            Destination = 'C:\Users\svcTeamCityAgent\.ssh'
+            PsDscRunAsCredential = $robocopyCredential
+        }
+        
         WindowsFeature IIS
         {
             Ensure               = 'Absent'
