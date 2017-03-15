@@ -6,10 +6,14 @@ configuration TestConfig
     Import-DscResource -ModuleName cChoco
     Import-DscResource -ModuleName xRobocopy
     
+    $keyvaultCredential = Get-AutomationPSCredential -Name 'azureSubRockCore'
+    Login-AzureRmAccount -Credential $keyvaultCredential
+    $domainCredentials = New-Object System.Management.Automation.PSCredential (“cloud\doormanTreeFrog”, (Get-AzureKeyVaultSecret -VaultName prod-rock-core-keyVault -Name doormanTreeFrog))
+    
     $robocopyCredential = Get-AutomationPSCredential -Name 'robocopyCredential'
     $svcTeamCityAgent = Get-AutomationPSCredential -Name 'svcTeamCityAgent'
     $storageCredential = Get-AutomationPSCredential -Name 'storageCredential'
-    $domainCredentials = Get-AutomationPSCredential -Name 'domainCreds'
+    #$domainCredentials = Get-AutomationPSCredential -Name 'domainCreds'
     $domainName = Get-AutomationVariable -Name 'domainName'
     
     Node WebServer
