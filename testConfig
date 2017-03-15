@@ -6,6 +6,7 @@ configuration TestConfig
     Import-DscResource -ModuleName cChoco
     Import-DscResource -ModuleName xRobocopy
     Import-DscResource -ModuleName AzureRM.KeyVault
+    Import-Module AzureRm.KeyVault
     
     $keyvaultCredential = Get-AutomationPSCredential -Name 'azureSubRockCore'
     Login-AzureRmAccount -Credential $keyvaultCredential
